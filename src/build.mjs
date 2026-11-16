@@ -6,8 +6,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHROME = process.env.CHROME ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const ANCHO = 830; // lienzo CSS; las capturas salen a 2x (1660 px)
-const ALTO_TARJETA = 280;
+const ANCHO_TARJETA = 610; // lienzo CSS; salen a 2x (1220 px) y el README las muestra a 830. En un móvil (~358 px) la letra de 22 px queda en ~13 px
+const ALTO_TARJETA = 384;
 
 const leer = (...p) => readFileSync(join(RAIZ, ...p));
 const fuenteB64 = (archivo) => `data:font/woff2;base64,${leer('src', 'fonts', archivo).toString('base64')}`;
@@ -20,9 +20,9 @@ const TOKENS = leer('src', 'tokens.css').toString();
 const esc = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
 
 // Rellena la plantilla HTML y la captura con Chrome headless a 2x (con fondo transparente si se pide).
-function capturar(plantilla, datos, salida, { alto, ancho = ANCHO, transparente = false }) {
+function capturar(plantilla, datos, salida, { alto, ancho, transparente = false }) {
   let html = leer('src', plantilla).toString();
-  for (const [k, v] of Object.entries({ FONTS, TOKENS, ALTO: alto, ...datos })) html = html.replaceAll(`{{${k}}}`, () => String(v));
+  for (const [k, v] of Object.entries({ FONTS, TOKENS, ALTO: alto, ANCHO: ancho, ...datos })) html = html.replaceAll(`{{${k}}}`, () => String(v));
   mkdirSync(join(RAIZ, 'tmp'), { recursive: true });
   const tmp = join(RAIZ, 'tmp', `${plantilla}.tmp.html`);
   writeFileSync(tmp, html);
@@ -41,7 +41,7 @@ function buildCards() {
   const tarjetas = JSON.parse(leer('src', 'cards.json'));
   for (const { id, etiqueta, titulo, en, es } of tarjetas) {
     capturar('card.html', { ETIQUETA: esc(etiqueta), TITULO: esc(titulo), EN: esc(en), ES: esc(es) },
-      join(RAIZ, 'assets', `card-${id}.png`), { alto: ALTO_TARJETA });
+      join(RAIZ, 'assets', `card-${id}.png`), { alto: ALTO_TARJETA, ancho: ANCHO_TARJETA });
   }
 }
 

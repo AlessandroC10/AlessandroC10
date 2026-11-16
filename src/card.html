@@ -4,7 +4,7 @@
 {{FONTS}}
 {{TOKENS}}
 *{box-sizing:border-box;margin:0}
-html,body{width:830px;height:{{ALTO}}px;background:var(--abismo)}
+html,body{width:{{ANCHO}}px;height:{{ALTO}}px;background:var(--abismo)}
 body{position:relative;overflow:hidden;font-family:'Archivo',sans-serif;color:var(--nieve)}
 .fondo{position:absolute;inset:0;background:
   radial-gradient(520px 260px at 92% -20%,rgba(60,120,164,.55),transparent 70%),
@@ -13,7 +13,7 @@ body{position:relative;overflow:hidden;font-family:'Archivo',sans-serif;color:va
 .lamina{position:absolute;inset:14px;border-radius:18px;background:var(--glass-alta);
   border:1px solid var(--borde-glass);box-shadow:inset 0 1px 0 var(--filo);
   backdrop-filter:var(--desenfoque);padding:24px 32px;display:flex;flex-direction:column;gap:16px}
-.cab{display:flex;align-items:baseline;gap:18px}
+.cab{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .n{font:500 18px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:var(--arco)}
 h2{font:italic 500 44px/1 'Bodoni Moda',serif;color:var(--destello)}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}

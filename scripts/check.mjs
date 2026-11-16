@@ -54,9 +54,11 @@ grupo('readme', () => {
   const hosts = [...md.matchAll(/https?:\/\/([^/"')\s]+)/g)].map((m) => m[1]);
   const permitidos = ['www.linkedin.com']; // alessandroconte.dev se añade cuando la web sea pública
   check('enlaces externos solo a hosts permitidos', hosts.every((h) => permitidos.includes(h)), hosts.join(', '));
+  // La web aún pide contraseña (401): ni enlace ni dominio suelto. Quitar esta regla cuando sea pública.
+  check('README no menciona alessandroconte.dev', !md.includes('alessandroconte.dev'));
 });
 
-// R1 + R2: tarjetas (ancho 1660 = lienzo de 830 px a 2x; hasta 300 KB cada una).
+// R1 + R2: tarjetas (ancho 1220 = lienzo de 610 px a 2x: al encogerse a ~358 px en un móvil, la letra de 22 px queda en ~13 px; hasta 300 KB cada una).
 grupo('cards', () => {
   for (const c of CARDS) {
     const f = ruta(c);
@@ -64,7 +66,7 @@ grupo('cards', () => {
     if (!existsSync(f)) continue;
     const { w } = pngSize(f);
     const { size } = statSync(f);
-    check(`${c} mide 1660 px de ancho`, w === 1660, `ancho ${w}`);
+    check(`${c} mide 1220 px de ancho`, w === 1220, `ancho ${w}`);
     check(`${c} pesa como mucho 300 KB`, size <= 300 * KB, `${Math.round(size / KB)} KB`);
   }
 });
