@@ -1,4 +1,4 @@
-// Genera las imágenes del perfil. Uso: node src/build.mjs [cards]
+// Genera las imágenes del perfil. Uso: node src/build.mjs [cards|header] (sin argumento, ambas)
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -19,8 +19,8 @@ const TOKENS = leer('src', 'tokens.css').toString();
 
 const esc = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
 
-// Rellena la plantilla HTML y la captura con Chrome headless a 2x.
-function capturar(plantilla, datos, salida, alto) {
+// Rellena la plantilla HTML y la captura con Chrome headless a 2x (con fondo transparente si se pide).
+function capturar(plantilla, datos, salida, { alto, ancho = ANCHO, transparente = false }) {
   let html = leer('src', plantilla).toString();
   for (const [k, v] of Object.entries({ FONTS, TOKENS, ALTO: alto, ...datos })) html = html.replaceAll(`{{${k}}}`, () => String(v));
   mkdirSync(join(RAIZ, 'tmp'), { recursive: true });
@@ -29,19 +29,55 @@ function capturar(plantilla, datos, salida, alto) {
   execFileSync(
     CHROME,
     ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--force-device-scale-factor=2',
-      `--window-size=${ANCHO},${alto}`, '--virtual-time-budget=3000', `--screenshot=${salida}`, pathToFileURL(tmp).href],
+      `--window-size=${ancho},${alto}`, '--virtual-time-budget=3000',
+      ...(transparente ? ['--default-background-color=00000000'] : []),
+      `--screenshot=${salida}`, pathToFileURL(tmp).href],
     { stdio: 'ignore' },
   );
 }
 
-async function buildCards() {
+function buildCards() {
   mkdirSync(join(RAIZ, 'assets'), { recursive: true });
   const tarjetas = JSON.parse(leer('src', 'cards.json'));
   for (const { id, etiqueta, titulo, en, es } of tarjetas) {
     capturar('card.html', { ETIQUETA: esc(etiqueta), TITULO: esc(titulo), EN: esc(en), ES: esc(es) },
-      join(RAIZ, 'assets', `card-${id}.png`), ALTO_TARJETA);
+      join(RAIZ, 'assets', `card-${id}.png`), { alto: ALTO_TARJETA });
   }
 }
 
-const tareas = { cards: buildCards };
-for (const t of process.argv[2] ? [process.argv[2]] : Object.keys(tareas)) await tareas[t]();
+const FONDO_VIDEO = process.env.FONDO_VIDEO
+  ?? join(RAIZ, '..', 'roadmap_vida_personal', 'portfolio_alessandro', 'media', 'scroll', 'fondo_16-9.mp4');
+const CALIDAD_WEBP = process.env.CALIDAD_WEBP ?? '75';
+const BUCLE = { inicio: 0.5, segundos: 2.2 }; // tramo del túnel; va y vuelve para cerrar sin salto
+const RECORTE = 'crop=1920:480:0:300'; // 4:1 centrado en el túnel (el vídeo es de 1920x1080)
+
+const ffmpeg = (...args) => execFileSync('ffmpeg', ['-y', '-v', 'error', ...args], { stdio: 'inherit' });
+
+// Grafo de ffmpeg: recorte, escala, bucle de ida y vuelta (sin repetir fotogramas en las costuras) y rótulo encima.
+function grafo(ancho, alto, fps) {
+  const n = Math.round(BUCLE.segundos * fps);
+  return `[0:v]fps=${fps},${RECORTE},scale=${ancho}:${alto}:flags=lanczos,setsar=1,split[a][b];`
+    + `[b]reverse,trim=start_frame=1:end_frame=${n - 1},setpts=PTS-STARTPTS[r];`
+    + `[a][r]concat=n=2:v=1:a=0,setpts=N/(${fps}*TB)[bucle];`
+    + `[1:v]scale=${ancho}:${alto}[rotulo];[bucle][rotulo]overlay=0:0:format=auto`;
+}
+
+function buildHeader() {
+  mkdirSync(join(RAIZ, 'assets'), { recursive: true });
+  const rotulo = join(RAIZ, 'tmp', 'rotulo.png');
+  capturar('header-overlay.html', {}, rotulo, { alto: 150, ancho: 600, transparente: true });
+  const entrada = ['-ss', String(BUCLE.inicio), '-t', String(BUCLE.segundos), '-i', FONDO_VIDEO, '-i', rotulo];
+  const salida = (nombre) => join(RAIZ, 'assets', nombre);
+  ffmpeg(...entrada, '-filter_complex', `${grafo(1200, 300, 15)},format=yuva420p[out]`, '-map', '[out]',
+    '-c:v', 'libwebp_anim', '-q:v', CALIDAD_WEBP, '-compression_level', '6', '-loop', '0', salida('header.webp'));
+  ffmpeg(...entrada, '-filter_complex',
+    `${grafo(800, 200, 10)},split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];`
+    + '[s1][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle[out]',
+    '-map', '[out]', '-loop', '0', salida('header.gif'));
+  ffmpeg('-ss', '1.6', '-i', FONDO_VIDEO, '-i', rotulo, '-filter_complex',
+    `[0:v]${RECORTE},scale=1200:300:flags=lanczos,setsar=1[v];[1:v]scale=1200:300[o];[v][o]overlay=0:0:format=auto`,
+    '-frames:v', '1', salida('header-static.png'));
+}
+
+const tareas = { cards: buildCards, header: buildHeader };
+for (const t of process.argv[2] ? [process.argv[2]] : Object.keys(tareas)) tareas[t]();
