@@ -1,0 +1,30 @@
+[
+  {
+    "id": "codigo",
+    "etiqueta": "01 · CODE",
+    "titulo": "Código",
+    "en": "Internal software in production: meeting transcript to deployed web proposal, from 2+ hours down to about 30 minutes.",
+    "es": "Software interno en producción: de la transcripción de una reunión a una propuesta web, de al menos 2 h a unos 30 min."
+  },
+  {
+    "id": "comunicacion",
+    "etiqueta": "02 · COMMUNICATION",
+    "titulo": "Comunicación",
+    "en": "Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude.",
+    "es": "Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude."
+  },
+  {
+    "id": "negocio",
+    "etiqueta": "03 · BUSINESS",
+    "titulo": "Negocio",
+    "en": "Business degree and audit background (Deloitte). 25+ commercial web proposals shipped for clients.",
+    "es": "ADE y auditoría en Deloitte. Más de 25 propuestas web comerciales desplegadas para clientes."
+  },
+  {
+    "id": "idiomas",
+    "etiqueta": "04 · LANGUAGES",
+    "titulo": "Idiomas",
+    "en": "Native Spanish, bilingual Italian, English B2 (C1 in progress). An assessment platform in 4 languages for 2,970 employees.",
+    "es": "Español nativo, italiano bilingüe, inglés B2 (cursando C1). Plataforma de evaluación en 4 idiomas para 2.970 empleados."
+  }
+]

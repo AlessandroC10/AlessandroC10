@@ -1,0 +1,19 @@
+/* Copia de los tokens de portfolio_alessandro/index.html (:root). La fuente de verdad es esa web. */
+:root{
+  --abismo:#0B1016;
+  --roca:#141A22;
+  --pizarra:#212B36;
+  --nieve:#DEEDEC;
+  --escarcha:#C7D7DA;
+  --cristal-4:#A0C2DE;
+  --cristal-3:#7DA9D0;
+  --cristal-2:#5A92BC;
+  --cristal-1:#3C78A4;
+  --arco:#9BE8FF;
+  --destello:#EAF4FF;
+  --glass:rgba(255,255,255,.06);
+  --glass-alta:rgba(255,255,255,.10);
+  --borde-glass:rgba(255,255,255,.14);
+  --filo:rgba(234,244,255,.30);
+  --desenfoque:blur(16px);
+}
