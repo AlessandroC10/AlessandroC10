@@ -5,8 +5,6 @@
   <img src="assets/header.webp" width="830" alt="Alessandro Conte. AI Developer, ponente y formador en IA. Cabecera animada: un túnel de cristales de hielo.">
 </picture>
 
-**Alessandro Conte** · AI Developer · Ponente y formador en IA / Speaker and AI trainer
-
 <img src="assets/card-codigo.png" width="830" alt="01 · Code / Código. EN: Internal software in production: meeting transcript to deployed web proposal, from 2+ hours down to about 30 minutes. ES: Software interno en producción: de la transcripción de una reunión a una propuesta web, de al menos 2 h a unos 30 min.">
 
 <img src="assets/card-comunicacion.png" width="830" alt="02 · Communication / Comunicación. EN: Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude. ES: Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude.">

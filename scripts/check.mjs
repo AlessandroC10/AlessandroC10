@@ -40,7 +40,10 @@ grupo('readme', () => {
   const md = readFileSync(f, 'utf8');
   check('README sin correos', !/[\w.+-]+@[\w-]+\.[\w.-]+/.test(md));
   check('README sin teléfonos', !/\+?\d[\d ().-]{8,}\d/.test(md));
-  check('README tiene el titular en texto real', md.includes('AI Developer · Ponente y formador en IA'));
+  // El titular vive en la cabecera: su alt lo lleva (lectores de pantalla) y la bio de GitHub ya es texto. No se repite debajo.
+  const altCabecera = md.match(/<img\b[^>]*\balt="([^"]*)"/)?.[1] ?? '';
+  check('el alt de la cabecera lleva el nombre y el titular', /Alessandro Conte/.test(altCabecera) && /AI Developer/.test(altCabecera) && /ponente y formador en IA/i.test(altCabecera));
+  check('el titular no se repite como texto visible', !/ponente y formador en IA/i.test(md.replace(/<[^>]*>/g, '')));
   check('README respeta «reducir movimiento»', md.includes('prefers-reduced-motion: reduce'));
   const imgs = md.match(/<img\b[^>]*>/g) ?? [];
   check('README tiene las 5 imágenes (cabecera y 4 tarjetas)', imgs.length === 5, `${imgs.length}`);
