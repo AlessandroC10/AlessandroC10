@@ -36,8 +36,24 @@ function check(regla, ok, detalle = '') {
   if (!ok) fallos++;
 }
 
+// R3 + R4 + R5: el README es público (sin datos personales), accesible y sin servicios de terceros.
 grupo('readme', () => {
-  check('README.md existe', existsSync(ruta('README.md')));
+  const f = ruta('README.md');
+  check('README.md existe', existsSync(f));
+  if (!existsSync(f)) return;
+  const md = readFileSync(f, 'utf8');
+  check('README sin correos', !/[\w.+-]+@[\w-]+\.[\w.-]+/.test(md));
+  check('README sin teléfonos', !/\+?\d[\d ().-]{8,}\d/.test(md));
+  check('README tiene el titular en texto real', md.includes('AI Developer · Ponente y formador en IA'));
+  check('README respeta «reducir movimiento»', md.includes('prefers-reduced-motion: reduce'));
+  const imgs = md.match(/<img\b[^>]*>/g) ?? [];
+  check('README tiene las 5 imágenes (cabecera y 4 tarjetas)', imgs.length === 5, `${imgs.length}`);
+  check('toda imagen lleva alt no vacío', imgs.every((i) => /\balt="[^"]+"/.test(i)));
+  const rutas = [...md.matchAll(/(?:src|srcset)="([^"]+)"/g)].map((m) => m[1]).filter((u) => !/^https?:/.test(u));
+  for (const r of rutas) check(`ruta relativa existe: ${r}`, existsSync(ruta(r)));
+  const hosts = [...md.matchAll(/https?:\/\/([^/"')\s]+)/g)].map((m) => m[1]);
+  const permitidos = ['www.linkedin.com']; // alessandroconte.dev se añade cuando la web sea pública
+  check('enlaces externos solo a hosts permitidos', hosts.every((h) => permitidos.includes(h)), hosts.join(', '));
 });
 
 // R1 + R2: tarjetas (ancho 1660 = lienzo de 830 px a 2x; hasta 300 KB cada una).
