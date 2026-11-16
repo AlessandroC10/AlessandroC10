@@ -1,4 +1,5 @@
-// Genera las imágenes del perfil. Uso: node src/build.mjs [cards|header] (sin argumento, ambas)
+// Genera las imágenes del perfil. Uso: node src/build.mjs [cards|header] (sin argumento, ambas).
+// La cabecera necesita FONDO_VIDEO=<ruta al fondo_16-9.mp4 del portfolio>.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -45,8 +46,7 @@ function buildCards() {
   }
 }
 
-const FONDO_VIDEO = process.env.FONDO_VIDEO
-  ?? join(RAIZ, '..', 'roadmap_vida_personal', 'portfolio_alessandro', 'media', 'scroll', 'fondo_16-9.mp4');
+const FONDO_VIDEO = process.env.FONDO_VIDEO; // ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio)
 const CALIDAD_WEBP = process.env.CALIDAD_WEBP ?? '75';
 const BUCLE = { inicio: 0.5, segundos: 2.2 }; // tramo del túnel; va y vuelve para cerrar sin salto
 const RECORTE = 'crop=1920:480:0:300'; // 4:1 centrado en el túnel (el vídeo es de 1920x1080)
@@ -63,6 +63,7 @@ function grafo(ancho, alto, fps) {
 }
 
 function buildHeader() {
+  if (!FONDO_VIDEO) throw new Error('Falta FONDO_VIDEO: ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio).');
   mkdirSync(join(RAIZ, 'assets'), { recursive: true });
   const rotulo = join(RAIZ, 'tmp', 'rotulo.png');
   capturar('header-overlay.html', {}, rotulo, { alto: 150, ancho: 600, transparente: true });
@@ -70,10 +71,6 @@ function buildHeader() {
   const salida = (nombre) => join(RAIZ, 'assets', nombre);
   ffmpeg(...entrada, '-filter_complex', `${grafo(1200, 300, 15)},format=yuva420p[out]`, '-map', '[out]',
     '-c:v', 'libwebp_anim', '-q:v', CALIDAD_WEBP, '-compression_level', '6', '-loop', '0', salida('header.webp'));
-  ffmpeg(...entrada, '-filter_complex',
-    `${grafo(800, 200, 10)},split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];`
-    + '[s1][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle[out]',
-    '-map', '[out]', '-loop', '0', salida('header.gif'));
   ffmpeg('-ss', '1.6', '-i', FONDO_VIDEO, '-i', rotulo, '-filter_complex',
     `[0:v]${RECORTE},scale=1200:300:flags=lanczos,setsar=1[v];[1:v]scale=1200:300[o];[v][o]overlay=0:0:format=auto`,
     '-frames:v', '1', salida('header-static.png'));

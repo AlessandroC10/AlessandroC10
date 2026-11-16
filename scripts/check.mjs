@@ -19,10 +19,6 @@ const webpInfo = (archivo) => {
   const b = readFileSync(archivo);
   return { vp8x: b.toString('ascii', 12, 16) === 'VP8X', animado: (b[20] & 0x02) !== 0, w: 1 + b.readUIntLE(24, 3), h: 1 + b.readUIntLE(27, 3) };
 };
-const gifSize = (archivo) => {
-  const b = readFileSync(archivo);
-  return { w: b.readUInt16LE(6), h: b.readUInt16LE(8) };
-};
 
 // `node scripts/check.mjs [grupo]`: sin argumento corre todas las reglas; con uno, solo ese grupo (cards, header, readme).
 const SOLO = process.argv[2];
@@ -71,23 +67,25 @@ grupo('cards', () => {
   }
 });
 
-// R1 + R2: cabecera (4:1; WebP animado hasta 3 MB, GIF de respaldo hasta 4 MB, póster estático).
+// R1 + R2: cabecera (4:1; WebP animado hasta 3 MB y póster estático).
 grupo('header', () => {
-  const archivos = ['header.webp', 'header.gif', 'header-static.png'].map((n) => `assets/${n}`);
+  const archivos = ['header.webp', 'header-static.png'].map((n) => `assets/${n}`);
   for (const a of archivos) check(`${a} existe`, existsSync(ruta(a)));
   if (!archivos.every((a) => existsSync(ruta(a)))) return;
-  const [webp, gif, png] = archivos.map((a) => ruta(a));
+  const [webp, png] = archivos.map((a) => ruta(a));
   const w = webpInfo(webp);
   check('header.webp es animado', w.vp8x && w.animado);
   check('header.webp mide 1200x300', w.w === 1200 && w.h === 300, `${w.w}x${w.h}`);
   const webpSize = statSync(webp).size;
   check('header.webp pesa como mucho 3 MB', webpSize <= 3 * MB, `${(webpSize / MB).toFixed(2)} MB`);
-  const g = gifSize(gif);
-  const gifBytes = statSync(gif).size;
-  check('header.gif es 4:1', g.w === 4 * g.h, `${g.w}x${g.h}`);
-  check('header.gif pesa como mucho 4 MB', gifBytes <= 4 * MB, `${(gifBytes / MB).toFixed(2)} MB`);
   const p = pngSize(png);
   check('header-static.png mide 1200x300', p.w === 1200 && p.h === 300, `${p.w}x${p.h}`);
+});
+
+// El repo va a ser público: sin rutas locales del autor en el código y sin el GIF de respaldo (3 MB sin uso).
+grupo('repo', () => {
+  check('build.mjs sin rutas locales del autor', !readFileSync(ruta('src', 'build.mjs'), 'utf8').includes('roadmap_vida_personal'));
+  check('assets/header.gif no está en el repo', !existsSync(ruta('assets', 'header.gif')));
 });
 
 process.exitCode = fallos ? 1 : 0;
