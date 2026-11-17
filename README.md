@@ -11,7 +11,7 @@
 
 <img src="assets/card-negocio.webp" width="830" alt="Negocio. Marketing digital con IA y más de 25 propuestas web comerciales para clientes. Grado en ADE y auditoría en Deloitte.">
 
-<img src="assets/stack.svg" width="830" alt="Stack en órbita: Claude Code, MCP, RAG, Python, TypeScript, Next.js, FastAPI, PostgreSQL, Firebase, n8n, Docker, Playwright, GitHub, Make y Coolify.">
+<img src="assets/stack.svg" width="830" alt="Stack en órbita: Claude Code, MCP, RAG, Python, TypeScript, Next.js, FastAPI, PostgreSQL, Firebase, n8n, Docker, Playwright, GitHub y Coolify.">
 
 <a href="https://www.linkedin.com/in/alessandrocontem"><img src="assets/button-linkedin.png" width="420" alt="Conectemos en LinkedIn."></a>
 

@@ -104,7 +104,7 @@ grupo('svg', () => {
   const svg = readFileSync(f, 'utf8');
   const { size } = statSync(f);
   check('stack.svg pesa como mucho 400 KB', size <= 400 * KB, `${Math.round(size / KB)} KB`);
-  check('stack.svg tiene lienzo 610x440', svg.includes('viewBox="0 0 610 440"'));
+  check('stack.svg tiene lienzo 610x480', svg.includes('viewBox="0 0 610 480"'));
   check('stack.svg sin scripts ni recursos externos', !/<script|(?:href|src)="https?:|url\(\s*["']?https?:/i.test(svg));
   check('stack.svg respeta «reducir movimiento»', svg.includes('prefers-reduced-motion'));
   // Pastillas anchas y rectas que giran se pisan según la dirección que une a dos de ellas: quedan fijas y giran los aros.
@@ -112,8 +112,17 @@ grupo('svg', () => {
   const logos = Object.keys(JSON.parse(leer('src', 'stack.json')).logos);
   const usos = svg.match(/<use\b/g) ?? [];
   check('stack.svg lleva el logo de cada herramienta que lo tiene', usos.length >= logos.length, `${usos.length} de ${logos.length}`);
+  const { logos: marcas, anillos } = JSON.parse(leer('src', 'stack.json'));
+  check('Make ya no está en el stack y Coolify lleva logo', !anillos.flatMap((a) => a.items).includes('Make') && 'Coolify' in marcas);
   const colores = new Set([...svg.matchAll(/<use class="logo"[^>]*\bfill="(#[0-9A-Fa-f]{6})"/g)].map((m) => m[1].toLowerCase()));
   check('los logos van en color (al menos 8 colores distintos)', colores.size >= 8, `${colores.size}`);
+  // Se lee el SVG final: la posición de cada pastilla (translate) y su ancho, y se cuentan las que se montan.
+  const pastillas = [...svg.matchAll(/<g class="pastilla" transform="translate\(([-\d.]+) ([-\d.]+)\)"><rect x="[-\d.]+" y="-17" width="(\d+)" height="34"/g)]
+    .map((m) => ({ x: +m[1], y: +m[2], w: +m[3] }));
+  const montadas = pastillas.reduce((n, a, i) => n + pastillas.slice(i + 1)
+    .filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 4 && Math.abs(a.y - b.y) < 38).length, 0);
+  check('stack.svg: ninguna pastilla se monta sobre otra', pastillas.length === anillos.flatMap((a) => a.items).length && montadas === 0,
+    `${montadas} choques entre ${pastillas.length} pastillas`);
 });
 
 // Botón de LinkedIn (420x92 px de lienzo a 2x, hasta 150 KB).

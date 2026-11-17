@@ -11,11 +11,12 @@
     "n8n": ["n8n", "#EA4B71"],
     "Docker": ["docker", "#2496ED"],
     "Playwright": ["playwright", "#45BA4B"],
-    "GitHub": ["github", "#EAF4FF"]
+    "GitHub": ["github", "#EAF4FF"],
+    "Coolify": ["coolify", "#9B6BFF"]
   },
   "anillos": [
-    { "radio": 85, "vuelta": 28, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },
-    { "radio": 140, "vuelta": 42, "sentido": -1, "items": ["Python", "TypeScript", "Next.js", "FastAPI", "PostgreSQL"] },
-    { "radio": 195, "vuelta": 60, "sentido": 1, "items": ["Firebase", "n8n", "Docker", "Playwright", "GitHub", "Make", "Coolify"] }
+    { "radio": 90, "vuelta": 28, "sentido": 1, "items": ["RAG", "MCP", "n8n"] },
+    { "radio": 152, "vuelta": 42, "sentido": -1, "items": ["Python", "Next.js", "Docker", "GitHub", "Coolify"] },
+    { "radio": 214, "vuelta": 60, "sentido": 1, "items": ["Claude Code", "TypeScript", "PostgreSQL", "FastAPI", "Playwright", "Firebase"] }
   ]
 }

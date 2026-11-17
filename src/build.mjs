@@ -108,36 +108,46 @@ function buildHeader() {
 
 // Órbita del stack: pastillas fijas y legibles (con logo de color cuando lo hay) sobre aros punteados que giran con un satélite luminoso.
 function buildStack() {
-  const [cx, cy] = [305, 220];
+  const [cx, cy] = [305, 240];
   const { logos, anillos } = JSON.parse(leer('src', 'stack.json')); // logos: nombre -> [id del símbolo, color]
   const anchoPastilla = (nombre) => Math.round(nombre.length * 11.4 + 36 + (logos[nombre] ? 26 : 0));
-  const centros = (fases) => anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
-    const ang = (2 * Math.PI * k) / items.length + fases[i];
-    return { x: cx + radio * Math.cos(ang), y: cy + radio * Math.sin(ang), w: anchoPastilla(nombre) };
-  }));
-  const choques = (fases) => centros(fases).reduce((n, a, i, c) => n + c.slice(i + 1)
-    .filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 8 && Math.abs(a.y - b.y) < 42).length, 0);
-  // Posición de las pastillas sin que ninguna se monte sobre otra.
-  let fases = [0, 0, 0];
+  // Reparto y posición de las pastillas sin choques ni salidas del lienzo: búsqueda aleatoria con semilla fija (siempre el mismo resultado).
+  const tamanos = anillos.map((a) => a.items.length);
+  const colocar = (orden, fases) => {
+    let desde = 0;
+    return anillos.flatMap(({ radio }, i) => orden.slice(desde, (desde += tamanos[i])).map((nombre, k) => {
+      const ang = (2 * Math.PI * k) / tamanos[i] + fases[i];
+      return { nombre, x: cx + radio * Math.cos(ang), y: cy + radio * Math.sin(ang), w: anchoPastilla(nombre) };
+    }));
+  };
+  const problemas = (p) => p.reduce((n, a, i) => n
+    + (a.x - a.w / 2 < 6 || a.x + a.w / 2 > 604 || a.y - 17 < 6 || a.y + 17 > 2 * cy - 6 ? 1 : 0)
+    + p.slice(i + 1).filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 6 && Math.abs(a.y - b.y) < 40).length, 0);
+  let semilla = 7;
+  const azar = () => { semilla = (semilla * 1664525 + 1013904223) % 4294967296; return semilla / 4294967296; }; // generador lineal congruente
+  let colocadas = null;
   let menos = Infinity;
-  for (let f1 = 0; f1 < 6.28; f1 += 0.12) {
-    for (let f2 = 0; f2 < 6.28; f2 += 0.12) {
-      const n = choques([0, f1, f2]);
-      if (n < menos) { menos = n; fases = [0, f1, f2]; }
+  for (let intento = 0; intento < 40000 && menos > 0; intento++) {
+    const orden = anillos.flatMap((a) => a.items);
+    for (let i = orden.length - 1; i > 0; i--) {
+      const j = Math.floor(azar() * (i + 1));
+      [orden[i], orden[j]] = [orden[j], orden[i]];
     }
+    const p = colocar(orden, anillos.map(() => azar() * 2 * Math.PI));
+    const n = problemas(p);
+    if (n < menos) { menos = n; colocadas = p; }
   }
+  if (menos > 0) throw new Error(`No hay disposición sin choques (${menos}): separa más los aros o quita una pastilla.`);
   // Giran los aros punteados con su satélite; las pastillas quedan fijas (si giraran, al ser anchas y rectas se pisarían).
   const css = anillos.map(({ vuelta, sentido }, i) => `.r${i}{animation-duration:${vuelta}s;animation-direction:${sentido > 0 ? 'normal' : 'reverse'}}`).join('\n');
   const aros = anillos.map(({ radio }, i) => `<g class="giro r${i}"><circle class="anillo" cx="${cx}" cy="${cy}" r="${radio}"/>`
     + `<circle class="sat" cx="${cx + radio}" cy="${cy}" r="4.5"/></g>`).join('\n');
-  const pastillas = anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
-    const ang = (2 * Math.PI * k) / items.length + fases[i];
-    const w = anchoPastilla(nombre);
+  const pastillas = colocadas.map(({ nombre, x, y, w }) => {
     const logo = logos[nombre]
       ? `<use class="logo" href="#${logos[nombre][0]}" fill="${logos[nombre][1]}" x="${-w / 2 + 16}" y="-9" width="18" height="18"/>` : '';
-    return `<g class="pastilla" transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
+    return `<g class="pastilla" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">`
       + `<rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/>${logo}<text x="${logos[nombre] ? 13 : 0}">${esc(nombre)}</text></g>`;
-  })).join('\n');
+  }).join('\n');
   const svg = leer('src', 'stack.svg').toString()
     .replaceAll('{{FONTS}}', () => FONTS).replaceAll('{{SIMBOLOS}}', () => LOGOS)
     .replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => `${aros}\n${pastillas}`);
