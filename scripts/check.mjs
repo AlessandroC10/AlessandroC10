@@ -137,7 +137,7 @@ grupo('button', () => {
 
 // El repo va a ser público: sin rutas locales del autor y sin lo retirado (GIF, pase, semitono y versión en inglés).
 grupo('repo', () => {
-  check('build.mjs sin rutas locales del autor', !readFileSync(ruta('src', 'build.mjs'), 'utf8').includes('roadmap_vida_personal'));
+  check('build.mjs sin rutas locales del autor', !readFileSync(ruta('src', 'build.mjs'), 'utf8').includes(['roadmap', 'vida', 'personal'].join('_'))); // la carpeta local, sin escribirla entera
   const retirados = ['assets/header.gif', 'assets/lanyard.svg', 'src/lanyard.svg', 'src/halftone.html', 'README.en.md',
     'assets/header-en.webp', 'assets/header-en-static.png', 'assets/button-linkedin-en.png', 'assets/button-idioma-en.png', 'assets/button-idioma-es.png',
     ...['codigo', 'comunicacion', 'negocio'].map((id) => `assets/card-${id}-en.webp`)];
