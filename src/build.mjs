@@ -9,8 +9,7 @@ const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHROME = process.env.CHROME ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const ANCHO_TARJETA = 610; // lienzo CSS; salen a 2x (1220 px) y el README las muestra a 830. En un móvil (~358 px) la letra de 24 px queda en ~14 px
 const ALTO_TARJETA = 304;
-const SUFIJO = { es: '', en: '-en' }; // el README principal va en castellano; README.en.md usa los archivos -en
-const CARGO = { es: 'AI Developer · Ponente y formador en IA', en: 'AI Developer · AI speaker and trainer' };
+const CARGO = 'AI Developer · Ponente y formador en IA';
 
 const leer = (...p) => readFileSync(join(RAIZ, ...p));
 const salida = (...p) => join(RAIZ, 'assets', ...p);
@@ -45,35 +44,23 @@ const fotoB64 = (id) => `data:image/jpeg;base64,${leer('src', 'frames', `${id}.j
 
 function buildCards() {
   mkdirSync(salida(), { recursive: true });
-  const tarjetas = JSON.parse(leer('src', 'cards.json'));
-  for (const [idioma, sufijo] of Object.entries(SUFIJO)) {
-    for (const { id, lado, [idioma]: { titulo, texto } } of tarjetas) {
-      const png = join(RAIZ, 'tmp', `card-${id}${sufijo}.png`);
-      capturar('card.html', { LADO: lado, FOTO: fotoB64(id), TITULO: esc(titulo), TEXTO: esc(texto) }, png, { alto: ALTO_TARJETA, ancho: ANCHO_TARJETA });
-      ffmpeg('-i', png, '-c:v', 'libwebp', '-q:v', '90', '-compression_level', '6', salida(`card-${id}${sufijo}.webp`)); // con foto, el PNG pesa 5 veces más
-    }
+  for (const { id, lado, titulo, texto } of JSON.parse(leer('src', 'cards.json'))) {
+    const png = join(RAIZ, 'tmp', `card-${id}.png`);
+    capturar('card.html', { LADO: lado, FOTO: fotoB64(id), TITULO: esc(titulo), TEXTO: esc(texto) }, png, { alto: ALTO_TARJETA, ancho: ANCHO_TARJETA });
+    ffmpeg('-i', png, '-c:v', 'libwebp', '-q:v', '90', '-compression_level', '6', salida(`card-${id}.webp`)); // con foto, el PNG pesa 5 veces más
   }
 }
 
-// Un glifo de la colección de logos, para incrustarlo en una página HTML (los botones).
+// Un glifo de la colección de logos, para incrustarlo en una página HTML (el botón).
 function glifo(id) {
   const m = LOGOS.match(new RegExp(`<symbol id="${id}"([^>]*)>([\\s\\S]*?)</symbol>`));
   const vista = m[1].match(/viewBox="([^"]+)"/)[1];
   return `<svg class="icono" viewBox="${vista}" width="30" height="30" aria-hidden="true">${m[2]}</svg>`;
 }
 
-const BOTONES = [
-  { archivo: 'button-linkedin.png', icono: 'linkedin', texto: 'Conectemos en LinkedIn' },
-  { archivo: 'button-linkedin-en.png', icono: 'linkedin', texto: "Let's connect on LinkedIn" },
-  { archivo: 'button-idioma-en.png', texto: 'English version' },
-  { archivo: 'button-idioma-es.png', texto: 'Versión en español' },
-];
-
 function buildButton() {
   mkdirSync(salida(), { recursive: true });
-  for (const { archivo, icono, texto } of BOTONES) {
-    capturar('button.html', { ICONO: icono ? glifo(icono) : '', TEXTO: esc(texto) }, salida(archivo), { alto: 92, ancho: 420, transparente: true });
-  }
+  capturar('button.html', { ICONO: glifo('linkedin'), TEXTO: 'Conectemos en LinkedIn' }, salida('button-linkedin.png'), { alto: 92, ancho: 420, transparente: true });
 }
 
 const FONDO_VIDEO = process.env.FONDO_VIDEO; // ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio)
@@ -109,22 +96,20 @@ function grafo(ancho, alto, fps) {
 function buildHeader() {
   exigirVideo();
   mkdirSync(salida(), { recursive: true });
-  for (const [idioma, sufijo] of Object.entries(SUFIJO)) {
-    const rotulo = join(RAIZ, 'tmp', `rotulo${sufijo}.png`);
-    capturar('header-overlay.html', { CARGO: CARGO[idioma] }, rotulo, { alto: 150, ancho: 600, transparente: true });
-    const entrada = ['-ss', String(BUCLE.inicio), '-t', String(BUCLE.segundos), '-i', FONDO_VIDEO, '-i', rotulo];
-    ffmpeg(...entrada, '-filter_complex', `${grafo(1200, 300, 15)},format=yuva420p[out]`, '-map', '[out]',
-      '-c:v', 'libwebp_anim', '-q:v', CALIDAD_WEBP, '-compression_level', '6', '-loop', '0', salida(`header${sufijo}.webp`));
-    ffmpeg('-ss', '1.6', '-i', FONDO_VIDEO, '-i', rotulo, '-filter_complex',
-      `[0:v]${RECORTE},scale=1200:300:flags=lanczos,setsar=1[v];[1:v]scale=1200:300[o];[v][o]overlay=0:0:format=auto`,
-      '-frames:v', '1', salida(`header${sufijo}-static.png`));
-  }
+  const rotulo = join(RAIZ, 'tmp', 'rotulo.png');
+  capturar('header-overlay.html', { CARGO }, rotulo, { alto: 150, ancho: 600, transparente: true });
+  const entrada = ['-ss', String(BUCLE.inicio), '-t', String(BUCLE.segundos), '-i', FONDO_VIDEO, '-i', rotulo];
+  ffmpeg(...entrada, '-filter_complex', `${grafo(1200, 300, 15)},format=yuva420p[out]`, '-map', '[out]',
+    '-c:v', 'libwebp_anim', '-q:v', CALIDAD_WEBP, '-compression_level', '6', '-loop', '0', salida('header.webp'));
+  ffmpeg('-ss', '1.6', '-i', FONDO_VIDEO, '-i', rotulo, '-filter_complex',
+    `[0:v]${RECORTE},scale=1200:300:flags=lanczos,setsar=1[v];[1:v]scale=1200:300[o];[v][o]overlay=0:0:format=auto`,
+    '-frames:v', '1', salida('header-static.png'));
 }
 
-// Órbita del stack: pastillas fijas y legibles (con logo cuando lo hay) sobre aros punteados que giran con un satélite luminoso.
+// Órbita del stack: pastillas fijas y legibles (con logo de color cuando lo hay) sobre aros punteados que giran con un satélite luminoso.
 function buildStack() {
   const [cx, cy] = [305, 220];
-  const { logos, anillos } = JSON.parse(leer('src', 'stack.json'));
+  const { logos, anillos } = JSON.parse(leer('src', 'stack.json')); // logos: nombre -> [id del símbolo, color]
   const anchoPastilla = (nombre) => Math.round(nombre.length * 11.4 + 36 + (logos[nombre] ? 26 : 0));
   const centros = (fases) => anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
     const ang = (2 * Math.PI * k) / items.length + fases[i];
@@ -148,14 +133,14 @@ function buildStack() {
   const pastillas = anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
     const ang = (2 * Math.PI * k) / items.length + fases[i];
     const w = anchoPastilla(nombre);
-    const logo = logos[nombre] ? `<use class="logo" href="#${logos[nombre]}" x="${-w / 2 + 16}" y="-9" width="18" height="18"/>` : '';
+    const logo = logos[nombre]
+      ? `<use class="logo" href="#${logos[nombre][0]}" fill="${logos[nombre][1]}" x="${-w / 2 + 16}" y="-9" width="18" height="18"/>` : '';
     return `<g class="pastilla" transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
       + `<rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/>${logo}<text x="${logos[nombre] ? 13 : 0}">${esc(nombre)}</text></g>`;
   })).join('\n');
-  const marcado = `${aros}\n${pastillas}`;
   const svg = leer('src', 'stack.svg').toString()
     .replaceAll('{{FONTS}}', () => FONTS).replaceAll('{{SIMBOLOS}}', () => LOGOS)
-    .replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => marcado);
+    .replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => `${aros}\n${pastillas}`);
   writeFileSync(salida('stack.svg'), svg);
 }
 

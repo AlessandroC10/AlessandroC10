@@ -12,7 +12,6 @@
 .sat{fill:#9BE8FF;filter:drop-shadow(0 0 4px #9BE8FF)}
 .pastilla rect{fill:#1A232D;stroke:#7DA9D0;stroke-opacity:.5}
 .pastilla text{font:500 20px 'Archivo',sans-serif;fill:#DEEDEC;text-anchor:middle;dominant-baseline:central}
-.logo{fill:#EAF4FF}
 .giro{animation:giro linear infinite;transform-box:view-box;transform-origin:305px 220px}
 @keyframes giro{to{transform:rotate(360deg)}}
 .pulso{transform-box:fill-box;transform-origin:center;animation:pulso 4.5s ease-in-out infinite}

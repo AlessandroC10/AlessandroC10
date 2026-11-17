@@ -1,7 +1,5 @@
 <div align="center">
 
-<a href="README.en.md"><img src="assets/button-idioma-en.png" width="200" alt="English version of this profile."></a>
-
 <picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/header-static.png">
   <img src="assets/header.webp" width="830" alt="Alessandro Conte. AI Developer, ponente y formador en IA. Cabecera animada: un túnel de cristales de hielo.">

@@ -1,17 +1,17 @@
 {
   "logos": {
-    "Claude Code": "claude",
-    "MCP": "mcp",
-    "Python": "python",
-    "TypeScript": "typescript",
-    "Next.js": "nextdotjs",
-    "FastAPI": "fastapi",
-    "PostgreSQL": "postgresql",
-    "Firebase": "firebase",
-    "n8n": "n8n",
-    "Docker": "docker",
-    "Playwright": "playwright",
-    "GitHub": "github"
+    "Claude Code": ["claude", "#D97757"],
+    "MCP": ["mcp", "#EAF4FF"],
+    "Python": ["python", "#4B8BBE"],
+    "TypeScript": ["typescript", "#3A86D8"],
+    "Next.js": ["nextdotjs", "#EAF4FF"],
+    "FastAPI": ["fastapi", "#05A897"],
+    "PostgreSQL": ["postgresql", "#5B86E5"],
+    "Firebase": ["firebase", "#FFCA28"],
+    "n8n": ["n8n", "#EA4B71"],
+    "Docker": ["docker", "#2496ED"],
+    "Playwright": ["playwright", "#45BA4B"],
+    "GitHub": ["github", "#EAF4FF"]
   },
   "anillos": [
     { "radio": 85, "vuelta": 28, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },

@@ -2,37 +2,19 @@
   {
     "id": "codigo",
     "lado": "izq",
-    "es": {
-      "titulo": "Código",
-      "texto": "Aplicaciones, agentes y automatizaciones con IA que llegan a producción, del análisis del proceso al despliegue. LLM, RAG, MCP, Python y TypeScript."
-    },
-    "en": {
-      "titulo": "Code",
-      "texto": "AI apps, agents and automations that reach production, from process analysis to deployment. LLMs, RAG, MCP, Python and TypeScript."
-    }
+    "titulo": "Código",
+    "texto": "Aplicaciones, agentes y automatizaciones con IA que llegan a producción, del análisis del proceso al despliegue. LLM, RAG, MCP, Python y TypeScript."
   },
   {
     "id": "comunicacion",
     "lado": "der",
-    "es": {
-      "titulo": "Comunicación",
-      "texto": "Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude."
-    },
-    "en": {
-      "titulo": "Communication",
-      "texto": "Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude."
-    }
+    "titulo": "Comunicación",
+    "texto": "Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude."
   },
   {
     "id": "negocio",
     "lado": "izq",
-    "es": {
-      "titulo": "Negocio",
-      "texto": "Marketing digital con IA y más de 25 propuestas web comerciales para clientes. Grado en ADE y auditoría en Deloitte."
-    },
-    "en": {
-      "titulo": "Business",
-      "texto": "Digital marketing with AI and 25+ commercial web proposals for clients. Business Administration degree (ADE) and audit at Deloitte."
-    }
+    "titulo": "Negocio",
+    "texto": "Marketing digital con IA y más de 25 propuestas web comerciales para clientes. Grado en ADE y auditoría en Deloitte."
   }
 ]

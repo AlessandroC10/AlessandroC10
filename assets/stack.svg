@@ -26,7 +26,6 @@
 .sat{fill:#9BE8FF;filter:drop-shadow(0 0 4px #9BE8FF)}
 .pastilla rect{fill:#1A232D;stroke:#7DA9D0;stroke-opacity:.5}
 .pastilla text{font:500 20px 'Archivo',sans-serif;fill:#DEEDEC;text-anchor:middle;dominant-baseline:central}
-.logo{fill:#EAF4FF}
 .giro{animation:giro linear infinite;transform-box:view-box;transform-origin:305px 220px}
 @keyframes giro{to{transform:rotate(360deg)}}
 .pulso{transform-box:fill-box;transform-origin:center;animation:pulso 4.5s ease-in-out infinite}
@@ -42,19 +41,19 @@
 <g class="giro r0"><circle class="anillo" cx="305" cy="220" r="85"/><circle class="sat" cx="390" cy="220" r="4.5"/></g>
 <g class="giro r1"><circle class="anillo" cx="305" cy="220" r="140"/><circle class="sat" cx="445" cy="220" r="4.5"/></g>
 <g class="giro r2"><circle class="anillo" cx="305" cy="220" r="195"/><circle class="sat" cx="500" cy="220" r="4.5"/></g>
-<g class="pastilla" transform="translate(390.0 220.0)"><rect x="-93.5" y="-17" width="187" height="34" rx="17"/><use class="logo" href="#claude" x="-77.5" y="-9" width="18" height="18"/><text x="13">Claude Code</text></g>
-<g class="pastilla" transform="translate(262.5 293.6)"><rect x="-48" y="-17" width="96" height="34" rx="17"/><use class="logo" href="#mcp" x="-32" y="-9" width="18" height="18"/><text x="13">MCP</text></g>
+<g class="pastilla" transform="translate(390.0 220.0)"><rect x="-93.5" y="-17" width="187" height="34" rx="17"/><use class="logo" href="#claude" fill="#D97757" x="-77.5" y="-9" width="18" height="18"/><text x="13">Claude Code</text></g>
+<g class="pastilla" transform="translate(262.5 293.6)"><rect x="-48" y="-17" width="96" height="34" rx="17"/><use class="logo" href="#mcp" fill="#EAF4FF" x="-32" y="-9" width="18" height="18"/><text x="13">MCP</text></g>
 <g class="pastilla" transform="translate(262.5 146.4)"><rect x="-35" y="-17" width="70" height="34" rx="17"/><text x="0">RAG</text></g>
-<g class="pastilla" transform="translate(398.4 324.3)"><rect x="-65" y="-17" width="130" height="34" rx="17"/><use class="logo" href="#python" x="-49" y="-9" width="18" height="18"/><text x="13">Python</text></g>
-<g class="pastilla" transform="translate(234.7 341.1)"><rect x="-88" y="-17" width="176" height="34" rx="17"/><use class="logo" href="#typescript" x="-72" y="-9" width="18" height="18"/><text x="13">TypeScript</text></g>
-<g class="pastilla" transform="translate(168.1 190.6)"><rect x="-71" y="-17" width="142" height="34" rx="17"/><use class="logo" href="#nextdotjs" x="-55" y="-9" width="18" height="18"/><text x="13">Next.js</text></g>
-<g class="pastilla" transform="translate(290.7 80.7)"><rect x="-71" y="-17" width="142" height="34" rx="17"/><use class="logo" href="#fastapi" x="-55" y="-9" width="18" height="18"/><text x="13">FastAPI</text></g>
-<g class="pastilla" transform="translate(433.0 163.3)"><rect x="-88" y="-17" width="176" height="34" rx="17"/><use class="logo" href="#postgresql" x="-72" y="-9" width="18" height="18"/><text x="13">PostgreSQL</text></g>
-<g class="pastilla" transform="translate(112.0 247.5)"><rect x="-76.5" y="-17" width="153" height="34" rx="17"/><use class="logo" href="#firebase" x="-60.5" y="-9" width="18" height="18"/><text x="13">Firebase</text></g>
-<g class="pastilla" transform="translate(163.1 86.2)"><rect x="-48" y="-17" width="96" height="34" rx="17"/><use class="logo" href="#n8n" x="-32" y="-9" width="18" height="18"/><text x="13">n8n</text></g>
-<g class="pastilla" transform="translate(321.1 25.7)"><rect x="-65" y="-17" width="130" height="34" rx="17"/><use class="logo" href="#docker" x="-49" y="-9" width="18" height="18"/><text x="13">Docker</text></g>
-<g class="pastilla" transform="translate(467.0 111.4)"><rect x="-88" y="-17" width="176" height="34" rx="17"/><use class="logo" href="#playwright" x="-72" y="-9" width="18" height="18"/><text x="13">Playwright</text></g>
-<g class="pastilla" transform="translate(490.9 279.0)"><rect x="-65" y="-17" width="130" height="34" rx="17"/><use class="logo" href="#github" x="-49" y="-9" width="18" height="18"/><text x="13">GitHub</text></g>
+<g class="pastilla" transform="translate(398.4 324.3)"><rect x="-65" y="-17" width="130" height="34" rx="17"/><use class="logo" href="#python" fill="#4B8BBE" x="-49" y="-9" width="18" height="18"/><text x="13">Python</text></g>
+<g class="pastilla" transform="translate(234.7 341.1)"><rect x="-88" y="-17" width="176" height="34" rx="17"/><use class="logo" href="#typescript" fill="#3A86D8" x="-72" y="-9" width="18" height="18"/><text x="13">TypeScript</text></g>
+<g class="pastilla" transform="translate(168.1 190.6)"><rect x="-71" y="-17" width="142" height="34" rx="17"/><use class="logo" href="#nextdotjs" fill="#EAF4FF" x="-55" y="-9" width="18" height="18"/><text x="13">Next.js</text></g>
+<g class="pastilla" transform="translate(290.7 80.7)"><rect x="-71" y="-17" width="142" height="34" rx="17"/><use class="logo" href="#fastapi" fill="#05A897" x="-55" y="-9" width="18" height="18"/><text x="13">FastAPI</text></g>
+<g class="pastilla" transform="translate(433.0 163.3)"><rect x="-88" y="-17" width="176" height="34" rx="17"/><use class="logo" href="#postgresql" fill="#5B86E5" x="-72" y="-9" width="18" height="18"/><text x="13">PostgreSQL</text></g>
+<g class="pastilla" transform="translate(112.0 247.5)"><rect x="-76.5" y="-17" width="153" height="34" rx="17"/><use class="logo" href="#firebase" fill="#FFCA28" x="-60.5" y="-9" width="18" height="18"/><text x="13">Firebase</text></g>
+<g class="pastilla" transform="translate(163.1 86.2)"><rect x="-48" y="-17" width="96" height="34" rx="17"/><use class="logo" href="#n8n" fill="#EA4B71" x="-32" y="-9" width="18" height="18"/><text x="13">n8n</text></g>
+<g class="pastilla" transform="translate(321.1 25.7)"><rect x="-65" y="-17" width="130" height="34" rx="17"/><use class="logo" href="#docker" fill="#2496ED" x="-49" y="-9" width="18" height="18"/><text x="13">Docker</text></g>
+<g class="pastilla" transform="translate(467.0 111.4)"><rect x="-88" y="-17" width="176" height="34" rx="17"/><use class="logo" href="#playwright" fill="#45BA4B" x="-72" y="-9" width="18" height="18"/><text x="13">Playwright</text></g>
+<g class="pastilla" transform="translate(490.9 279.0)"><rect x="-65" y="-17" width="130" height="34" rx="17"/><use class="logo" href="#github" fill="#EAF4FF" x="-49" y="-9" width="18" height="18"/><text x="13">GitHub</text></g>
 <g class="pastilla" transform="translate(374.8 402.1)"><rect x="-41" y="-17" width="82" height="34" rx="17"/><text x="0">Make</text></g>
 <g class="pastilla" transform="translate(206.2 388.1)"><rect x="-58" y="-17" width="116" height="34" rx="17"/><text x="0">Coolify</text></g>
 </g>
