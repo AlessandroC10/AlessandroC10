@@ -8,18 +8,17 @@
 </defs>
 <style>
 {{FONTS}}
-.anillo{fill:none;stroke:#9BE8FF;stroke-opacity:.2}
+.anillo{fill:none;stroke:#9BE8FF;stroke-opacity:.5;stroke-dasharray:2 7}
+.sat{fill:#9BE8FF;filter:drop-shadow(0 0 4px #9BE8FF)}
 .pastilla rect{fill:#1A232D;stroke:#7DA9D0;stroke-opacity:.5}
 .pastilla text{font:500 20px 'Archivo',sans-serif;fill:#DEEDEC;text-anchor:middle;dominant-baseline:central}
 .logo{fill:#EAF4FF}
-.giro,.contra{animation:giro linear infinite}
-.giro{transform-box:view-box;transform-origin:305px 220px}
-.contra{transform-box:fill-box;transform-origin:center}
+.giro{animation:giro linear infinite;transform-box:view-box;transform-origin:305px 220px}
 @keyframes giro{to{transform:rotate(360deg)}}
 .pulso{transform-box:fill-box;transform-origin:center;animation:pulso 4.5s ease-in-out infinite}
 @keyframes pulso{0%,100%{transform:scale(.92);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 {{CSS}}
-@media (prefers-reduced-motion:reduce){.giro,.contra,.pulso{animation:none}}
+@media (prefers-reduced-motion:reduce){.giro,.pulso{animation:none}}
 </style>
 <g clip-path="url(#marco)">
 <rect width="610" height="440" fill="url(#fondo)"/>

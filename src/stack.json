@@ -14,8 +14,8 @@
     "GitHub": "github"
   },
   "anillos": [
-    { "radio": 85, "vuelta": 70, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },
-    { "radio": 140, "vuelta": 70, "sentido": 1, "items": ["Python", "TypeScript", "Next.js", "FastAPI", "PostgreSQL"] },
-    { "radio": 195, "vuelta": 70, "sentido": 1, "items": ["Firebase", "n8n", "Docker", "Playwright", "GitHub", "Make", "Coolify"] }
+    { "radio": 85, "vuelta": 28, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },
+    { "radio": 140, "vuelta": 42, "sentido": -1, "items": ["Python", "TypeScript", "Next.js", "FastAPI", "PostgreSQL"] },
+    { "radio": 195, "vuelta": 60, "sentido": 1, "items": ["Firebase", "n8n", "Docker", "Playwright", "GitHub", "Make", "Coolify"] }
   ]
 }

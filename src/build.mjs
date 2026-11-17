@@ -121,7 +121,7 @@ function buildHeader() {
   }
 }
 
-// Órbita del stack: todos los anillos giran a la vez (rotación rígida) y cada pastilla contra-gira para quedar recta.
+// Órbita del stack: pastillas fijas y legibles (con logo cuando lo hay) sobre aros punteados que giran con un satélite luminoso.
 function buildStack() {
   const [cx, cy] = [305, 220];
   const { logos, anillos } = JSON.parse(leer('src', 'stack.json'));
@@ -132,7 +132,7 @@ function buildStack() {
   }));
   const choques = (fases) => centros(fases).reduce((n, a, i, c) => n + c.slice(i + 1)
     .filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 8 && Math.abs(a.y - b.y) < 42).length, 0);
-  // Fases iniciales sin pastillas montadas: la rotación es rígida, así que no se montan nunca.
+  // Posición de las pastillas sin que ninguna se monte sobre otra.
   let fases = [0, 0, 0];
   let menos = Infinity;
   for (let f1 = 0; f1 < 6.28; f1 += 0.12) {
@@ -141,18 +141,18 @@ function buildStack() {
       if (n < menos) { menos = n; fases = [0, f1, f2]; }
     }
   }
-  const css = anillos.map(({ vuelta }, i) => `.r${i},.c${i}{animation-duration:${vuelta}s}.c${i}{animation-direction:reverse}`).join('\n');
-  const marcado = anillos.map(({ radio, items }, i) => {
-    const pastillas = items.map((nombre, k) => {
-      const ang = (2 * Math.PI * k) / items.length + fases[i];
-      const w = anchoPastilla(nombre);
-      const logo = logos[nombre] ? `<use class="logo" href="#${logos[nombre]}" x="${-w / 2 + 16}" y="-9" width="18" height="18"/>` : '';
-      return `<g transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
-        + `<g class="contra c${i} pastilla"><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/>${logo}`
-        + `<text x="${logos[nombre] ? 13 : 0}">${esc(nombre)}</text></g></g>`;
-    }).join('');
-    return `<circle class="anillo" cx="${cx}" cy="${cy}" r="${radio}"/><g class="giro r${i}">${pastillas}</g>`;
-  }).join('\n');
+  // Giran los aros punteados con su satélite; las pastillas quedan fijas (si giraran, al ser anchas y rectas se pisarían).
+  const css = anillos.map(({ vuelta, sentido }, i) => `.r${i}{animation-duration:${vuelta}s;animation-direction:${sentido > 0 ? 'normal' : 'reverse'}}`).join('\n');
+  const aros = anillos.map(({ radio }, i) => `<g class="giro r${i}"><circle class="anillo" cx="${cx}" cy="${cy}" r="${radio}"/>`
+    + `<circle class="sat" cx="${cx + radio}" cy="${cy}" r="4.5"/></g>`).join('\n');
+  const pastillas = anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
+    const ang = (2 * Math.PI * k) / items.length + fases[i];
+    const w = anchoPastilla(nombre);
+    const logo = logos[nombre] ? `<use class="logo" href="#${logos[nombre]}" x="${-w / 2 + 16}" y="-9" width="18" height="18"/>` : '';
+    return `<g class="pastilla" transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
+      + `<rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/>${logo}<text x="${logos[nombre] ? 13 : 0}">${esc(nombre)}</text></g>`;
+  })).join('\n');
+  const marcado = `${aros}\n${pastillas}`;
   const svg = leer('src', 'stack.svg').toString()
     .replaceAll('{{FONTS}}', () => FONTS).replaceAll('{{SIMBOLOS}}', () => LOGOS)
     .replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => marcado);

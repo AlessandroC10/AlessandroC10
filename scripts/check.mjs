@@ -120,6 +120,8 @@ grupo('svg', () => {
   check('stack.svg tiene lienzo 610x440', svg.includes('viewBox="0 0 610 440"'));
   check('stack.svg sin scripts ni recursos externos', !/<script|(?:href|src)="https?:|url\(\s*["']?https?:/i.test(svg));
   check('stack.svg respeta «reducir movimiento»', svg.includes('prefers-reduced-motion'));
+  // Pastillas anchas y rectas que giran se pisan según la dirección que une a dos de ellas: quedan fijas y giran los aros.
+  check('stack.svg: las pastillas no giran (se mueven los aros y los satélites)', !svg.includes('class="contra') && /class="giro r0"><circle class="anillo"/.test(svg));
   const logos = Object.keys(JSON.parse(leer('src', 'stack.json')).logos);
   check('stack.svg lleva el logo de cada herramienta que lo tiene', (svg.match(/<use\b/g) ?? []).length >= logos.length, `${(svg.match(/<use\b/g) ?? []).length} de ${logos.length}`);
 });
