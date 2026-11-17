@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 610 440" width="610" height="440" role="img">
+<title>Stack de Alessandro Conte: Claude Code, MCP, RAG, Python, TypeScript, Next.js, FastAPI, PostgreSQL, Firebase, n8n, Docker, Playwright, Git, Make y Coolify</title>
+<defs>
+<linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#141A22"/><stop offset="1" stop-color="#0B1016"/></linearGradient>
+<radialGradient id="nucleo"><stop offset="0" stop-color="#EAF4FF"/><stop offset=".22" stop-color="#9BE8FF" stop-opacity=".75"/><stop offset="1" stop-color="#3C78A4" stop-opacity="0"/></radialGradient>
+<clipPath id="marco"><rect width="610" height="440" rx="20"/></clipPath>
+</defs>
+<style>
+{{FONTS}}
+.anillo{fill:none;stroke:#9BE8FF;stroke-opacity:.2}
+.pastilla rect{fill:#1A232D;stroke:#7DA9D0;stroke-opacity:.5}
+.pastilla text{font:500 20px 'Archivo',sans-serif;fill:#DEEDEC;text-anchor:middle;dominant-baseline:central}
+.giro,.contra{animation:giro linear infinite}
+.giro{transform-box:view-box;transform-origin:305px 220px}
+.contra{transform-box:fill-box;transform-origin:center}
+@keyframes giro{to{transform:rotate(360deg)}}
+{{CSS}}
+@media (prefers-reduced-motion:reduce){.giro,.contra{animation:none}}
+</style>
+<g clip-path="url(#marco)">
+<rect width="610" height="440" fill="url(#fondo)"/>
+<circle cx="305" cy="220" r="70" fill="url(#nucleo)"/>
+{{ANILLOS}}
+</g>
+<rect x=".5" y=".5" width="609" height="439" rx="20" fill="none" stroke="#fff" stroke-opacity=".14"/>
+</svg>

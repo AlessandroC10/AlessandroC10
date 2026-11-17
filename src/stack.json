@@ -1,0 +1,5 @@
+[
+  { "radio": 85, "vuelta": 36, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },
+  { "radio": 140, "vuelta": 54, "sentido": -1, "items": ["Python", "TypeScript", "Next.js", "FastAPI", "PostgreSQL"] },
+  { "radio": 195, "vuelta": 80, "sentido": 1, "items": ["Firebase", "n8n", "Docker", "Playwright", "Git", "Make", "Coolify"] }
+]

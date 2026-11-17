@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 610 410" width="610" height="410" role="img">
+<title>Pase colgado de un cordón con la foto de Alessandro Conte, AI Developer</title>
+<defs>
+<linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#141A22"/><stop offset="1" stop-color="#0B1016"/></linearGradient>
+<linearGradient id="pase" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B2733"/><stop offset="1" stop-color="#0E141B"/></linearGradient>
+<linearGradient id="cinta" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3C78A4"/><stop offset="1" stop-color="#5A92BC"/></linearGradient>
+<clipPath id="foto"><rect x="221" y="134" width="168" height="168" rx="12"/></clipPath>
+<clipPath id="marco"><rect width="610" height="410" rx="20"/></clipPath>
+</defs>
+<style>
+{{FONTS}}
+.pendulo{animation:pendulo 4.4s ease-in-out infinite;transform-box:view-box;transform-origin:305px 0}
+@keyframes pendulo{0%,100%{transform:rotate(5deg)}50%{transform:rotate(-5deg)}}
+@media (prefers-reduced-motion:reduce){.pendulo{animation:none}}
+.nombre{font:italic 500 22px 'Bodoni Moda',serif;fill:#EAF4FF;text-anchor:middle}
+.cargo{font:500 17px 'Archivo',sans-serif;fill:#C7D7DA;text-anchor:middle}
+</style>
+<g clip-path="url(#marco)">
+<rect width="610" height="410" fill="url(#fondo)"/>
+<image href="{{HALFTONE}}" x="0" y="0" width="610" height="410" opacity=".55"/>
+<g class="pendulo">
+<polygon points="250,-10 274,-10 313,98 297,98" fill="url(#cinta)"/>
+<polygon points="360,-10 336,-10 297,98 313,98" fill="url(#cinta)" opacity=".85"/>
+<rect x="289" y="90" width="32" height="22" rx="5" fill="#C7D7DA"/>
+<rect x="207" y="108" width="196" height="282" rx="18" fill="url(#pase)" stroke="#9BE8FF" stroke-opacity=".55"/>
+<rect x="287" y="118" width="36" height="8" rx="4" fill="#0B1016"/>
+<image href="{{AVATAR}}" x="221" y="134" width="168" height="168" clip-path="url(#foto)" preserveAspectRatio="xMidYMid slice"/>
+<text class="nombre" x="305" y="342">Alessandro Conte</text>
+<text class="cargo" x="305" y="368">AI Developer</text>
+<rect x="285" y="378" width="40" height="2" fill="#9BE8FF"/>
+</g>
+</g>
+<rect x=".5" y=".5" width="609" height="409" rx="20" fill="none" stroke="#fff" stroke-opacity=".14"/>
+</svg>

@@ -46,7 +46,9 @@ grupo('readme', () => {
   check('el titular no se repite como texto visible', !/ponente y formador en IA/i.test(md.replace(/<[^>]*>/g, '')));
   check('README respeta «reducir movimiento»', md.includes('prefers-reduced-motion: reduce'));
   const imgs = md.match(/<img\b[^>]*>/g) ?? [];
-  check('README tiene las 6 imágenes (cabecera, 4 tarjetas y botón)', imgs.length === 6, `${imgs.length}`);
+  check('README tiene las 8 imágenes (cabecera, pase, 4 tarjetas, stack y botón)', imgs.length === 8, `${imgs.length}`);
+  const stack = JSON.parse(readFileSync(ruta('src', 'stack.json'), 'utf8')).flatMap((a) => a.items);
+  check('el alt del stack nombra todas las tecnologías', stack.every((t) => md.includes(t)), stack.filter((t) => !md.includes(t)).join(', '));
   for (const { id, en, es } of JSON.parse(readFileSync(ruta('src', 'cards.json'), 'utf8'))) {
     check(`el alt de la tarjeta ${id} lleva su texto en inglés y castellano`, md.includes(en) && md.includes(es));
   }
@@ -90,6 +92,21 @@ grupo('header', () => {
   check('header.webp pesa como mucho 3 MB', webpSize <= 3 * MB, `${(webpSize / MB).toFixed(2)} MB`);
   const p = pngSize(png);
   check('header-static.png mide 1200x300', p.w === 1200 && p.h === 300, `${p.w}x${p.h}`);
+});
+
+// Pase y órbita del stack: SVG animados con CSS (GitHub no ejecuta JavaScript): sin scripts ni recursos externos.
+grupo('svg', () => {
+  for (const [nombre, alto] of [['lanyard.svg', 410], ['stack.svg', 440]]) {
+    const f = ruta('assets', nombre);
+    check(`assets/${nombre} existe`, existsSync(f));
+    if (!existsSync(f)) continue;
+    const svg = readFileSync(f, 'utf8');
+    const { size } = statSync(f);
+    check(`${nombre} pesa como mucho 600 KB`, size <= 600 * KB, `${Math.round(size / KB)} KB`);
+    check(`${nombre} tiene lienzo 610x${alto}`, svg.includes(`viewBox="0 0 610 ${alto}"`));
+    check(`${nombre} sin scripts ni recursos externos`, !/<script|(?:href|src)="https?:|url\(\s*["']?https?:/i.test(svg));
+    check(`${nombre} respeta «reducir movimiento»`, svg.includes('prefers-reduced-motion'));
+  }
 });
 
 // Botón de LinkedIn (420x92 px de lienzo a 2x, hasta 150 KB).

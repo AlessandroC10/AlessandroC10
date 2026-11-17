@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+*{margin:0}
+html,body{width:{{ANCHO}}px;height:{{ALTO}}px;background:transparent;overflow:hidden}
+canvas{display:block;width:{{ANCHO}}px;height:{{ALTO}}px}
+</style>
+<canvas id="c" width="{{ANCHO2}}" height="{{ALTO2}}"></canvas>
+<img id="f" src="{{ESCENA}}" style="display:none">
+<script>
+// Semitono: un círculo por celda, con radio proporcional a la luz del fotograma del túnel.
+const img = document.getElementById('f');
+const lienzo = document.getElementById('c').getContext('2d');
+function pintar() {
+  const celda = 8, columnas = Math.ceil({{ANCHO}} / celda), filas = Math.ceil({{ALTO}} / celda);
+  const muestra = document.createElement('canvas');
+  muestra.width = columnas; muestra.height = filas;
+  const g = muestra.getContext('2d');
+  g.drawImage(img, 0, 0, columnas, filas);
+  const d = g.getImageData(0, 0, columnas, filas).data;
+  lienzo.scale(2, 2);
+  lienzo.fillStyle = 'rgba(155,232,255,0.9)';
+  for (let y = 0; y < filas; y++) for (let x = 0; x < columnas; x++) {
+    const i = (y * columnas + x) * 4;
+    const luz = (0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255;
+    if (luz < 0.1) continue;
+    lienzo.beginPath();
+    lienzo.arc(x * celda + celda / 2, y * celda + celda / 2, celda * 0.52 * Math.sqrt(luz), 0, 6.2832);
+    lienzo.fill();
+  }
+}
+if (img.complete) pintar(); else img.onload = pintar;
+</script>

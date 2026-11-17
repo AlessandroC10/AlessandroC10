@@ -51,6 +51,64 @@ function buildButton() {
   capturar('button.html', {}, join(RAIZ, 'assets', 'button-linkedin.png'), { alto: 92, ancho: 420, transparente: true });
 }
 
+const dataUri = (mime, ...ruta) => `data:${mime};base64,${leer(...ruta).toString('base64')}`;
+const ALTO_PASE = 410;
+
+// Semitono (halftone): puntos cuyo radio sigue la luz de un fotograma del túnel. Chrome los pinta en un canvas y salen como PNG transparente.
+function buildHalftone() {
+  capturar('halftone.html', { ESCENA: dataUri('image/jpeg', 'src', 'frames', 'escena.jpg'), ANCHO2: 1220, ALTO2: ALTO_PASE * 2 },
+    join(RAIZ, 'tmp', 'halftone.png'), { alto: ALTO_PASE, ancho: 610, transparente: true });
+  ffmpeg('-i', join(RAIZ, 'tmp', 'halftone.png'), '-c:v', 'libwebp', '-q:v', '75', join(RAIZ, 'tmp', 'halftone.webp')); // 4 veces más ligero que el PNG
+}
+
+// El pase cuelga de un cordón y se balancea (SVG animado con CSS: GitHub no ejecuta JavaScript). avatar.jpg es tu foto de perfil reducida a 336 px.
+function buildLanyard() {
+  buildHalftone();
+  const svg = leer('src', 'lanyard.svg').toString()
+    .replaceAll('{{FONTS}}', () => FONTS)
+    .replaceAll('{{HALFTONE}}', () => `data:image/webp;base64,${readFileSync(join(RAIZ, 'tmp', 'halftone.webp')).toString('base64')}`)
+    .replaceAll('{{AVATAR}}', () => dataUri('image/jpeg', 'src', 'frames', 'avatar.jpg'));
+  writeFileSync(join(RAIZ, 'assets', 'lanyard.svg'), svg);
+}
+
+// Órbita del stack: cada anillo gira y sus pastillas contra-giran para quedar rectas.
+function buildStack() {
+  const [cx, cy] = [305, 220];
+  const anillos = JSON.parse(leer('src', 'stack.json'));
+  const anchoPastilla = (nombre) => Math.round(nombre.length * 11.4 + 36);
+  const centros = (fases) => anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
+    const ang = (2 * Math.PI * k) / items.length + fases[i];
+    return { x: cx + radio * Math.cos(ang), y: cy + radio * Math.sin(ang), w: anchoPastilla(nombre) };
+  }));
+  const choques = (fases) => centros(fases).reduce((n, a, i, c) => n + c.slice(i + 1)
+    .filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 8 && Math.abs(a.y - b.y) < 42).length, 0);
+  // Fases iniciales sin pastillas montadas: es lo que ve quien reduce el movimiento (imagen quieta).
+  let fases = [0, 0, 0];
+  let menos = Infinity;
+  for (let f1 = 0; f1 < 6.28; f1 += 0.12) {
+    for (let f2 = 0; f2 < 6.28; f2 += 0.12) {
+      const n = choques([0, f1, f2]);
+      if (n < menos) { menos = n; fases = [0, f1, f2]; }
+    }
+  }
+  const css = anillos.map(({ vuelta, sentido }, i) => {
+    const [giro, contra] = sentido > 0 ? ['normal', 'reverse'] : ['reverse', 'normal'];
+    return `.r${i}{animation-duration:${vuelta}s;animation-direction:${giro}}.c${i}{animation-duration:${vuelta}s;animation-direction:${contra}}`;
+  }).join('\n');
+  const marcado = anillos.map(({ radio, items }, i) => {
+    const pastillas = items.map((nombre, k) => {
+      const ang = (2 * Math.PI * k) / items.length + fases[i];
+      const w = anchoPastilla(nombre);
+      return `<g transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
+        + `<g class="contra c${i} pastilla"><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text>${esc(nombre)}</text></g></g>`;
+    }).join('');
+    return `<circle class="anillo" cx="${cx}" cy="${cy}" r="${radio}"/><g class="giro r${i}">${pastillas}</g>`;
+  }).join('\n');
+  const svg = leer('src', 'stack.svg').toString()
+    .replaceAll('{{FONTS}}', () => FONTS).replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => marcado);
+  writeFileSync(join(RAIZ, 'assets', 'stack.svg'), svg);
+}
+
 // Un fotograma distinto del túnel por tarjeta: se extraen una vez y se versionan en src/frames/.
 const MOMENTOS = { codigo: 1.4, comunicacion: 5.6, negocio: 2.0, idiomas: 3.2 }; // túnel, hielo arquitectónico, túnel, túnel suave
 
@@ -61,6 +119,8 @@ function buildFrames() {
     ffmpeg('-ss', String(t), '-i', FONDO_VIDEO, '-vf', 'crop=513:1080:900:0,scale=300:632:flags=lanczos',
       '-frames:v', '1', '-q:v', '3', join(RAIZ, 'src', 'frames', `${id}.jpg`));
   }
+  ffmpeg('-ss', '1.4', '-i', FONDO_VIDEO, '-vf', 'crop=1426:958:0:60,scale=610:410:flags=lanczos',
+    '-frames:v', '1', '-q:v', '3', join(RAIZ, 'src', 'frames', 'escena.jpg')); // fondo del semitono del pase
 }
 
 const FONDO_VIDEO = process.env.FONDO_VIDEO; // ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio)
@@ -97,5 +157,5 @@ function buildHeader() {
     '-frames:v', '1', salida('header-static.png'));
 }
 
-const tareas = { frames: buildFrames, cards: buildCards, button: buildButton, header: buildHeader };
+const tareas = { frames: buildFrames, cards: buildCards, button: buildButton, lanyard: buildLanyard, stack: buildStack, header: buildHeader };
 for (const t of process.argv[2] ? [process.argv[2]] : Object.keys(tareas)) tareas[t]();
