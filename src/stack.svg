@@ -14,12 +14,14 @@
 .giro{transform-box:view-box;transform-origin:305px 220px}
 .contra{transform-box:fill-box;transform-origin:center}
 @keyframes giro{to{transform:rotate(360deg)}}
+.pulso{transform-box:fill-box;transform-origin:center;animation:pulso 4.5s ease-in-out infinite}
+@keyframes pulso{0%,100%{transform:scale(.92);opacity:.8}50%{transform:scale(1.1);opacity:1}}
 {{CSS}}
-@media (prefers-reduced-motion:reduce){.giro,.contra{animation:none}}
+@media (prefers-reduced-motion:reduce){.giro,.contra,.pulso{animation:none}}
 </style>
 <g clip-path="url(#marco)">
 <rect width="610" height="440" fill="url(#fondo)"/>
-<circle cx="305" cy="220" r="70" fill="url(#nucleo)"/>
+<circle class="pulso" cx="305" cy="220" r="70" fill="url(#nucleo)"/>
 {{ANILLOS}}
 </g>
 <rect x=".5" y=".5" width="609" height="439" rx="20" fill="none" stroke="#fff" stroke-opacity=".14"/>

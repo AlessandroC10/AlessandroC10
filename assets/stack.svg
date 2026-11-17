@@ -17,14 +17,16 @@
 .giro{transform-box:view-box;transform-origin:305px 220px}
 .contra{transform-box:fill-box;transform-origin:center}
 @keyframes giro{to{transform:rotate(360deg)}}
-.r0{animation-duration:36s;animation-direction:normal}.c0{animation-duration:36s;animation-direction:reverse}
-.r1{animation-duration:54s;animation-direction:reverse}.c1{animation-duration:54s;animation-direction:normal}
-.r2{animation-duration:80s;animation-direction:normal}.c2{animation-duration:80s;animation-direction:reverse}
-@media (prefers-reduced-motion:reduce){.giro,.contra{animation:none}}
+.pulso{transform-box:fill-box;transform-origin:center;animation:pulso 4.5s ease-in-out infinite}
+@keyframes pulso{0%,100%{transform:scale(.92);opacity:.8}50%{transform:scale(1.1);opacity:1}}
+.r0{animation-duration:70s;animation-direction:normal}.c0{animation-duration:70s;animation-direction:reverse}
+.r1{animation-duration:70s;animation-direction:normal}.c1{animation-duration:70s;animation-direction:reverse}
+.r2{animation-duration:70s;animation-direction:normal}.c2{animation-duration:70s;animation-direction:reverse}
+@media (prefers-reduced-motion:reduce){.giro,.contra,.pulso{animation:none}}
 </style>
 <g clip-path="url(#marco)">
 <rect width="610" height="440" fill="url(#fondo)"/>
-<circle cx="305" cy="220" r="70" fill="url(#nucleo)"/>
+<circle class="pulso" cx="305" cy="220" r="70" fill="url(#nucleo)"/>
 <circle class="anillo" cx="305" cy="220" r="85"/><g class="giro r0"><g transform="translate(390.0 220.0)"><g class="contra c0 pastilla"><rect x="-80.5" y="-17" width="161" height="34" rx="17"/><text>Claude Code</text></g></g><g transform="translate(262.5 293.6)"><g class="contra c0 pastilla"><rect x="-35" y="-17" width="70" height="34" rx="17"/><text>MCP</text></g></g><g transform="translate(262.5 146.4)"><g class="contra c0 pastilla"><rect x="-35" y="-17" width="70" height="34" rx="17"/><text>RAG</text></g></g></g>
 <circle class="anillo" cx="305" cy="220" r="140"/><g class="giro r1"><g transform="translate(429.2 284.6)"><g class="contra c1 pastilla"><rect x="-52" y="-17" width="104" height="34" rx="17"/><text>Python</text></g></g><g transform="translate(281.9 358.1)"><g class="contra c1 pastilla"><rect x="-75" y="-17" width="150" height="34" rx="17"/><text>TypeScript</text></g></g><g transform="translate(166.5 240.7)"><g class="contra c1 pastilla"><rect x="-58" y="-17" width="116" height="34" rx="17"/><text>Next.js</text></g></g><g transform="translate(242.5 94.7)"><g class="contra c1 pastilla"><rect x="-58" y="-17" width="116" height="34" rx="17"/><text>FastAPI</text></g></g><g transform="translate(404.9 121.9)"><g class="contra c1 pastilla"><rect x="-75" y="-17" width="150" height="34" rx="17"/><text>PostgreSQL</text></g></g></g>
 <circle class="anillo" cx="305" cy="220" r="195"/><g class="giro r2"><g transform="translate(307.1 415.0)"><g class="contra c2 pastilla"><rect x="-63.5" y="-17" width="127" height="34" rx="17"/><text>Firebase</text></g></g><g transform="translate(153.9 343.2)"><g class="contra c2 pastilla"><rect x="-35" y="-17" width="70" height="34" rx="17"/><text>n8n</text></g></g><g transform="translate(114.4 178.7)"><g class="contra c2 pastilla"><rect x="-52" y="-17" width="104" height="34" rx="17"/><text>Docker</text></g></g><g transform="translate(218.5 45.2)"><g class="contra c2 pastilla"><rect x="-75" y="-17" width="150" height="34" rx="17"/><text>Playwright</text></g></g><g transform="translate(387.7 43.4)"><g class="contra c2 pastilla"><rect x="-35" y="-17" width="70" height="34" rx="17"/><text>Git</text></g></g><g transform="translate(494.6 174.6)"><g class="contra c2 pastilla"><rect x="-41" y="-17" width="82" height="34" rx="17"/><text>Make</text></g></g><g transform="translate(458.8 339.9)"><g class="contra c2 pastilla"><rect x="-58" y="-17" width="116" height="34" rx="17"/><text>Coolify</text></g></g></g>
