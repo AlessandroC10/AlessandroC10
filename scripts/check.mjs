@@ -46,7 +46,12 @@ grupo('readme', () => {
   check('el titular no se repite como texto visible', !/ponente y formador en IA/i.test(md.replace(/<[^>]*>/g, '')));
   check('README respeta «reducir movimiento»', md.includes('prefers-reduced-motion: reduce'));
   const imgs = md.match(/<img\b[^>]*>/g) ?? [];
-  check('README tiene las 5 imágenes (cabecera y 4 tarjetas)', imgs.length === 5, `${imgs.length}`);
+  check('README tiene las 6 imágenes (cabecera, 4 tarjetas y botón)', imgs.length === 6, `${imgs.length}`);
+  for (const { id, en, es } of JSON.parse(readFileSync(ruta('src', 'cards.json'), 'utf8'))) {
+    check(`el alt de la tarjeta ${id} lleva su texto en inglés y castellano`, md.includes(en) && md.includes(es));
+  }
+  check('LinkedIn va como botón (imagen enlazada), no como enlace de texto',
+    md.includes('<a href="https://www.linkedin.com/in/alessandrocontem"><img') && !/\[LinkedIn\]/.test(md));
   check('toda imagen lleva alt no vacío', imgs.every((i) => /\balt="[^"]+"/.test(i)));
   const rutas = [...md.matchAll(/(?:src|srcset)="([^"]+)"/g)].map((m) => m[1]).filter((u) => !/^https?:/.test(u));
   for (const r of rutas) check(`ruta relativa existe: ${r}`, existsSync(ruta(r)));
@@ -57,8 +62,10 @@ grupo('readme', () => {
   check('README no menciona alessandroconte.dev', !md.includes('alessandroconte.dev'));
 });
 
-// R1 + R2: tarjetas (ancho 1220 = lienzo de 610 px a 2x: al encogerse a ~358 px en un móvil, la letra de 22 px queda en ~13 px; hasta 300 KB cada una).
+// R1 + R2: tarjetas (ancho 1220 = lienzo de 610 px a 2x: al encogerse a ~358 px en un móvil, la letra de 22 px queda en ~13 px; hasta 700 KB cada una: llevan un fotograma del túnel).
 grupo('cards', () => {
+  const textos = readFileSync(ruta('src', 'cards.json'), 'utf8');
+  check('las tarjetas no mencionan la plataforma de evaluación', !/assessment|evaluación/i.test(textos));
   for (const c of CARDS) {
     const f = ruta(c);
     check(`${c} existe`, existsSync(f));
@@ -66,7 +73,7 @@ grupo('cards', () => {
     const { w } = pngSize(f);
     const { size } = statSync(f);
     check(`${c} mide 1220 px de ancho`, w === 1220, `ancho ${w}`);
-    check(`${c} pesa como mucho 300 KB`, size <= 300 * KB, `${Math.round(size / KB)} KB`);
+    check(`${c} pesa como mucho 700 KB`, size <= 700 * KB, `${Math.round(size / KB)} KB`);
   }
 });
 
@@ -83,6 +90,16 @@ grupo('header', () => {
   check('header.webp pesa como mucho 3 MB', webpSize <= 3 * MB, `${(webpSize / MB).toFixed(2)} MB`);
   const p = pngSize(png);
   check('header-static.png mide 1200x300', p.w === 1200 && p.h === 300, `${p.w}x${p.h}`);
+});
+
+// Botón de LinkedIn (420x92 px de lienzo a 2x, hasta 150 KB).
+grupo('button', () => {
+  const f = ruta('assets', 'button-linkedin.png');
+  check('assets/button-linkedin.png existe', existsSync(f));
+  if (!existsSync(f)) return;
+  const { w } = pngSize(f);
+  check('button-linkedin.png mide 840 px de ancho', w === 840, `ancho ${w}`);
+  check('button-linkedin.png pesa como mucho 150 KB', statSync(f).size <= 150 * KB, `${Math.round(statSync(f).size / KB)} KB`);
 });
 
 // El repo va a ser público: sin rutas locales del autor en el código y sin el GIF de respaldo (3 MB sin uso).

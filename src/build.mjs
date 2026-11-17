@@ -1,5 +1,5 @@
-// Genera las imágenes del perfil. Uso: node src/build.mjs [cards|header] (sin argumento, ambas).
-// La cabecera necesita FONDO_VIDEO=<ruta al fondo_16-9.mp4 del portfolio>.
+// Genera las imágenes del perfil. Uso: node src/build.mjs [frames|cards|button|header] (sin argumento, todas).
+// frames y header necesitan FONDO_VIDEO=<ruta al fondo_16-9.mp4 del portfolio>.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHROME = process.env.CHROME ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const ANCHO_TARJETA = 610; // lienzo CSS; salen a 2x (1220 px) y el README las muestra a 830. En un móvil (~358 px) la letra de 22 px queda en ~13 px
-const ALTO_TARJETA = 384;
+const ALTO_TARJETA = 408;
 
 const leer = (...p) => readFileSync(join(RAIZ, ...p));
 const fuenteB64 = (archivo) => `data:font/woff2;base64,${leer('src', 'fonts', archivo).toString('base64')}`;
@@ -37,12 +37,29 @@ function capturar(plantilla, datos, salida, { alto, ancho, transparente = false 
   );
 }
 
+const fotoB64 = (id) => `data:image/jpeg;base64,${leer('src', 'frames', `${id}.jpg`).toString('base64')}`;
+
 function buildCards() {
   mkdirSync(join(RAIZ, 'assets'), { recursive: true });
-  const tarjetas = JSON.parse(leer('src', 'cards.json'));
-  for (const { id, etiqueta, titulo, en, es } of tarjetas) {
-    capturar('card.html', { ETIQUETA: esc(etiqueta), TITULO: esc(titulo), EN: esc(en), ES: esc(es) },
+  for (const { id, lado, titulo, en, es } of JSON.parse(leer('src', 'cards.json'))) {
+    capturar('card.html', { LADO: lado, FOTO: fotoB64(id), TITULO: esc(titulo), EN: esc(en), ES: esc(es) },
       join(RAIZ, 'assets', `card-${id}.png`), { alto: ALTO_TARJETA, ancho: ANCHO_TARJETA });
+  }
+}
+
+function buildButton() {
+  capturar('button.html', {}, join(RAIZ, 'assets', 'button-linkedin.png'), { alto: 92, ancho: 420, transparente: true });
+}
+
+// Un fotograma distinto del túnel por tarjeta: se extraen una vez y se versionan en src/frames/.
+const MOMENTOS = { codigo: 1.4, comunicacion: 5.6, negocio: 2.0, idiomas: 3.2 }; // túnel, hielo arquitectónico, túnel, túnel suave
+
+function buildFrames() {
+  exigirVideo();
+  mkdirSync(join(RAIZ, 'src', 'frames'), { recursive: true });
+  for (const [id, t] of Object.entries(MOMENTOS)) {
+    ffmpeg('-ss', String(t), '-i', FONDO_VIDEO, '-vf', 'crop=513:1080:900:0,scale=300:632:flags=lanczos',
+      '-frames:v', '1', '-q:v', '3', join(RAIZ, 'src', 'frames', `${id}.jpg`));
   }
 }
 
@@ -62,8 +79,12 @@ function grafo(ancho, alto, fps) {
     + `[1:v]scale=${ancho}:${alto}[rotulo];[bucle][rotulo]overlay=0:0:format=auto`;
 }
 
-function buildHeader() {
+function exigirVideo() {
   if (!FONDO_VIDEO) throw new Error('Falta FONDO_VIDEO: ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio).');
+}
+
+function buildHeader() {
+  exigirVideo();
   mkdirSync(join(RAIZ, 'assets'), { recursive: true });
   const rotulo = join(RAIZ, 'tmp', 'rotulo.png');
   capturar('header-overlay.html', {}, rotulo, { alto: 150, ancho: 600, transparente: true });
@@ -76,5 +97,5 @@ function buildHeader() {
     '-frames:v', '1', salida('header-static.png'));
 }
 
-const tareas = { cards: buildCards, header: buildHeader };
+const tareas = { frames: buildFrames, cards: buildCards, button: buildButton, header: buildHeader };
 for (const t of process.argv[2] ? [process.argv[2]] : Object.keys(tareas)) tareas[t]();

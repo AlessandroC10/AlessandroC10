@@ -1,30 +1,30 @@
 [
   {
     "id": "codigo",
-    "etiqueta": "01 · CODE",
+    "lado": "izq",
     "titulo": "Código",
-    "en": "Internal software in production: meeting transcript to deployed web proposal, from 2+ hours down to about 30 minutes.",
-    "es": "Software interno en producción: de la transcripción de una reunión a una propuesta web, de al menos 2 h a unos 30 min."
+    "en": "AI apps, agents and automations that reach production, from process analysis to deployment. LLMs, RAG, MCP, Python and TypeScript.",
+    "es": "Aplicaciones, agentes y automatizaciones con IA que llegan a producción, del análisis del proceso al despliegue. LLM, RAG, MCP, Python y TypeScript."
   },
   {
     "id": "comunicacion",
-    "etiqueta": "02 · COMMUNICATION",
+    "lado": "der",
     "titulo": "Comunicación",
     "en": "Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude.",
     "es": "Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude."
   },
   {
     "id": "negocio",
-    "etiqueta": "03 · BUSINESS",
+    "lado": "izq",
     "titulo": "Negocio",
-    "en": "Business degree and audit background (Deloitte). 25+ commercial web proposals shipped for clients.",
-    "es": "ADE y auditoría en Deloitte. Más de 25 propuestas web comerciales desplegadas para clientes."
+    "en": "Digital marketing with AI, Meta Ads and Google Ads, 25+ commercial web proposals. Business Administration degree (ADE), audit at Deloitte.",
+    "es": "Marketing digital con IA, Meta Ads y Google Ads, más de 25 propuestas web comerciales. Grado en ADE y auditoría en Deloitte."
   },
   {
     "id": "idiomas",
-    "etiqueta": "04 · LANGUAGES",
+    "lado": "der",
     "titulo": "Idiomas",
-    "en": "Native Spanish, bilingual Italian, English B2 (C1 in progress). An assessment platform in 4 languages for 2,970 employees.",
-    "es": "Español nativo, italiano bilingüe, inglés B2 (cursando C1). Plataforma de evaluación en 4 idiomas para 2.970 empleados."
+    "en": "Native Spanish, bilingual Italian, English B2 (C1 in progress). Customer service in English in Amsterdam.",
+    "es": "Español nativo, italiano bilingüe, inglés B2 (cursando C1). Atención al cliente en inglés en Ámsterdam."
   }
 ]

@@ -5,14 +5,14 @@
   <img src="assets/header.webp" width="830" alt="Alessandro Conte. AI Developer, ponente y formador en IA. Cabecera animada: un túnel de cristales de hielo.">
 </picture>
 
-<img src="assets/card-codigo.png" width="830" alt="01 · Code / Código. EN: Internal software in production: meeting transcript to deployed web proposal, from 2+ hours down to about 30 minutes. ES: Software interno en producción: de la transcripción de una reunión a una propuesta web, de al menos 2 h a unos 30 min.">
+<img src="assets/card-codigo.png" width="830" alt="Código / Code. EN: AI apps, agents and automations that reach production, from process analysis to deployment. LLMs, RAG, MCP, Python and TypeScript. ES: Aplicaciones, agentes y automatizaciones con IA que llegan a producción, del análisis del proceso al despliegue. LLM, RAG, MCP, Python y TypeScript.">
 
-<img src="assets/card-comunicacion.png" width="830" alt="02 · Communication / Comunicación. EN: Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude. ES: Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude.">
+<img src="assets/card-comunicacion.png" width="830" alt="Comunicación / Communication. EN: Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude. ES: Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude.">
 
-<img src="assets/card-negocio.png" width="830" alt="03 · Business / Negocio. EN: Business degree and audit background (Deloitte). 25+ commercial web proposals shipped for clients. ES: ADE y auditoría en Deloitte. Más de 25 propuestas web comerciales desplegadas para clientes.">
+<img src="assets/card-negocio.png" width="830" alt="Negocio / Business. EN: Digital marketing with AI, Meta Ads and Google Ads, 25+ commercial web proposals. Business Administration degree (ADE), audit at Deloitte. ES: Marketing digital con IA, Meta Ads y Google Ads, más de 25 propuestas web comerciales. Grado en ADE y auditoría en Deloitte.">
 
-<img src="assets/card-idiomas.png" width="830" alt="04 · Languages / Idiomas. EN: Native Spanish, bilingual Italian, English B2 (C1 in progress). An assessment platform in 4 languages for 2,970 employees. ES: Español nativo, italiano bilingüe, inglés B2 (cursando C1). Plataforma de evaluación en 4 idiomas para 2.970 empleados.">
+<img src="assets/card-idiomas.png" width="830" alt="Idiomas / Languages. EN: Native Spanish, bilingual Italian, English B2 (C1 in progress). Customer service in English in Amsterdam. ES: Español nativo, italiano bilingüe, inglés B2 (cursando C1). Atención al cliente en inglés en Ámsterdam.">
 
-[LinkedIn](https://www.linkedin.com/in/alessandrocontem)
+<a href="https://www.linkedin.com/in/alessandrocontem"><img src="assets/button-linkedin.png" width="420" alt="Conectemos en LinkedIn. Let's connect on LinkedIn."></a>
 
 </div>
