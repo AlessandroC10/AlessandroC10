@@ -19,13 +19,10 @@ body{position:relative;overflow:hidden;font-family:'Archivo',sans-serif;color:va
 .izq .filo{left:0}
 .der .filo{right:0}
 .izq .l-der,.der .l-izq{display:none}
-.texto{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:20px 24px 20px 14px}
+.texto{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:20px 24px 20px 14px}
 .der .texto{padding:20px 14px 20px 24px}
 h2{font:italic 500 56px/1 'Bodoni Moda',serif;letter-spacing:-.01em;color:var(--destello)}
-.sep{height:1px;background:linear-gradient(90deg,var(--filo),transparent)}
-p{font-size:22px;line-height:1.32}
-.en{font-weight:500;color:var(--nieve)}
-.es{color:var(--escarcha);opacity:.8}
+p{font-size:24px;line-height:1.3;font-weight:500;color:var(--nieve)}
 </style>
 <section class="tarjeta {{LADO}}">
   <div class="foto"></div>
@@ -35,8 +32,6 @@ p{font-size:22px;line-height:1.32}
   </svg>
   <div class="texto">
     <h2>{{TITULO}}</h2>
-    <p class="en">{{EN}}</p>
-    <div class="sep"></div>
-    <p class="es">{{ES}}</p>
+    <p>{{TEXTO}}</p>
   </div>
 </section>

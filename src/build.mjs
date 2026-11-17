@@ -1,4 +1,4 @@
-// Genera las imágenes del perfil. Uso: node src/build.mjs [frames|cards|button|header] (sin argumento, todas).
+// Genera las imágenes del perfil. Uso: node src/build.mjs [frames|cards|button|header|stack] (sin argumento, todas).
 // frames y header necesitan FONDO_VIDEO=<ruta al fondo_16-9.mp4 del portfolio>.
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -7,21 +7,25 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CHROME = process.env.CHROME ?? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const ANCHO_TARJETA = 610; // lienzo CSS; salen a 2x (1220 px) y el README las muestra a 830. En un móvil (~358 px) la letra de 22 px queda en ~13 px
-const ALTO_TARJETA = 408;
+const ANCHO_TARJETA = 610; // lienzo CSS; salen a 2x (1220 px) y el README las muestra a 830. En un móvil (~358 px) la letra de 24 px queda en ~14 px
+const ALTO_TARJETA = 304;
+const SUFIJO = { es: '', en: '-en' }; // el README principal va en castellano; README.en.md usa los archivos -en
+const CARGO = { es: 'AI Developer · Ponente y formador en IA', en: 'AI Developer · AI speaker and trainer' };
 
 const leer = (...p) => readFileSync(join(RAIZ, ...p));
+const salida = (...p) => join(RAIZ, 'assets', ...p);
 const fuenteB64 = (archivo) => `data:font/woff2;base64,${leer('src', 'fonts', archivo).toString('base64')}`;
 const FONTS = `
 @font-face{font-family:'Archivo';font-weight:400 700;font-stretch:62% 125%;src:url(${fuenteB64('archivo-latin.woff2')}) format('woff2')}
-@font-face{font-family:'Bodoni Moda';font-style:italic;font-weight:500;src:url(${fuenteB64('bodoni-moda-italic-500-latin.woff2')}) format('woff2')}
-@font-face{font-family:'IBM Plex Mono';font-weight:500;src:url(${fuenteB64('ibm-plex-mono-500-latin.woff2')}) format('woff2')}`;
+@font-face{font-family:'Bodoni Moda';font-style:italic;font-weight:500;src:url(${fuenteB64('bodoni-moda-italic-500-latin.woff2')}) format('woff2')}`;
 const TOKENS = leer('src', 'tokens.css').toString();
+const LOGOS = leer('src', 'logos.svg').toString().replace(/<!--[\s\S]*?-->/g, '').trim(); // <symbol> de Simple Icons (CC0)
 
 const esc = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
+const ffmpeg = (...args) => execFileSync('ffmpeg', ['-y', '-v', 'error', ...args], { stdio: 'inherit' });
 
 // Rellena la plantilla HTML y la captura con Chrome headless a 2x (con fondo transparente si se pide).
-function capturar(plantilla, datos, salida, { alto, ancho, transparente = false }) {
+function capturar(plantilla, datos, destino, { alto, ancho, transparente = false }) {
   let html = leer('src', plantilla).toString();
   for (const [k, v] of Object.entries({ FONTS, TOKENS, ALTO: alto, ANCHO: ancho, ...datos })) html = html.replaceAll(`{{${k}}}`, () => String(v));
   mkdirSync(join(RAIZ, 'tmp'), { recursive: true });
@@ -32,7 +36,7 @@ function capturar(plantilla, datos, salida, { alto, ancho, transparente = false 
     ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--force-device-scale-factor=2',
       `--window-size=${ancho},${alto}`, '--virtual-time-budget=3000',
       ...(transparente ? ['--default-background-color=00000000'] : []),
-      `--screenshot=${salida}`, pathToFileURL(tmp).href],
+      `--screenshot=${destino}`, pathToFileURL(tmp).href],
     { stdio: 'ignore' },
   );
 }
@@ -40,77 +44,49 @@ function capturar(plantilla, datos, salida, { alto, ancho, transparente = false 
 const fotoB64 = (id) => `data:image/jpeg;base64,${leer('src', 'frames', `${id}.jpg`).toString('base64')}`;
 
 function buildCards() {
-  mkdirSync(join(RAIZ, 'assets'), { recursive: true });
-  for (const { id, lado, titulo, en, es } of JSON.parse(leer('src', 'cards.json'))) {
-    capturar('card.html', { LADO: lado, FOTO: fotoB64(id), TITULO: esc(titulo), EN: esc(en), ES: esc(es) },
-      join(RAIZ, 'assets', `card-${id}.png`), { alto: ALTO_TARJETA, ancho: ANCHO_TARJETA });
-  }
-}
-
-function buildButton() {
-  capturar('button.html', {}, join(RAIZ, 'assets', 'button-linkedin.png'), { alto: 92, ancho: 420, transparente: true });
-}
-
-const dataUri = (mime, ...ruta) => `data:${mime};base64,${leer(...ruta).toString('base64')}`;
-const ALTO_PASE = 410;
-
-// Semitono (halftone): puntos cuyo radio sigue la luz de un fotograma del túnel. Chrome los pinta en un canvas y salen como PNG transparente.
-function buildHalftone() {
-  capturar('halftone.html', { ESCENA: dataUri('image/jpeg', 'src', 'frames', 'escena.jpg'), ANCHO2: 1220, ALTO2: ALTO_PASE * 2 },
-    join(RAIZ, 'tmp', 'halftone.png'), { alto: ALTO_PASE, ancho: 610, transparente: true });
-  ffmpeg('-i', join(RAIZ, 'tmp', 'halftone.png'), '-c:v', 'libwebp', '-q:v', '75', join(RAIZ, 'tmp', 'halftone.webp')); // 4 veces más ligero que el PNG
-}
-
-// El pase cuelga de un cordón y se balancea (SVG animado con CSS: GitHub no ejecuta JavaScript). avatar.jpg es tu foto de perfil reducida a 336 px.
-function buildLanyard() {
-  buildHalftone();
-  const svg = leer('src', 'lanyard.svg').toString()
-    .replaceAll('{{FONTS}}', () => FONTS)
-    .replaceAll('{{HALFTONE}}', () => `data:image/webp;base64,${readFileSync(join(RAIZ, 'tmp', 'halftone.webp')).toString('base64')}`)
-    .replaceAll('{{AVATAR}}', () => dataUri('image/jpeg', 'src', 'frames', 'avatar.jpg'));
-  writeFileSync(join(RAIZ, 'assets', 'lanyard.svg'), svg);
-}
-
-// Órbita del stack: cada anillo gira y sus pastillas contra-giran para quedar rectas.
-function buildStack() {
-  const [cx, cy] = [305, 220];
-  const anillos = JSON.parse(leer('src', 'stack.json'));
-  const anchoPastilla = (nombre) => Math.round(nombre.length * 11.4 + 36);
-  const centros = (fases) => anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
-    const ang = (2 * Math.PI * k) / items.length + fases[i];
-    return { x: cx + radio * Math.cos(ang), y: cy + radio * Math.sin(ang), w: anchoPastilla(nombre) };
-  }));
-  const choques = (fases) => centros(fases).reduce((n, a, i, c) => n + c.slice(i + 1)
-    .filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 8 && Math.abs(a.y - b.y) < 42).length, 0);
-  // Fases iniciales sin pastillas montadas: es lo que ve quien reduce el movimiento (imagen quieta).
-  let fases = [0, 0, 0];
-  let menos = Infinity;
-  for (let f1 = 0; f1 < 6.28; f1 += 0.12) {
-    for (let f2 = 0; f2 < 6.28; f2 += 0.12) {
-      const n = choques([0, f1, f2]);
-      if (n < menos) { menos = n; fases = [0, f1, f2]; }
+  mkdirSync(salida(), { recursive: true });
+  const tarjetas = JSON.parse(leer('src', 'cards.json'));
+  for (const [idioma, sufijo] of Object.entries(SUFIJO)) {
+    for (const { id, lado, [idioma]: { titulo, texto } } of tarjetas) {
+      const png = join(RAIZ, 'tmp', `card-${id}${sufijo}.png`);
+      capturar('card.html', { LADO: lado, FOTO: fotoB64(id), TITULO: esc(titulo), TEXTO: esc(texto) }, png, { alto: ALTO_TARJETA, ancho: ANCHO_TARJETA });
+      ffmpeg('-i', png, '-c:v', 'libwebp', '-q:v', '90', '-compression_level', '6', salida(`card-${id}${sufijo}.webp`)); // con foto, el PNG pesa 5 veces más
     }
   }
-  const css = anillos.map(({ vuelta, sentido }, i) => {
-    const [giro, contra] = sentido > 0 ? ['normal', 'reverse'] : ['reverse', 'normal'];
-    return `.r${i}{animation-duration:${vuelta}s;animation-direction:${giro}}.c${i}{animation-duration:${vuelta}s;animation-direction:${contra}}`;
-  }).join('\n');
-  const marcado = anillos.map(({ radio, items }, i) => {
-    const pastillas = items.map((nombre, k) => {
-      const ang = (2 * Math.PI * k) / items.length + fases[i];
-      const w = anchoPastilla(nombre);
-      return `<g transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
-        + `<g class="contra c${i} pastilla"><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/><text>${esc(nombre)}</text></g></g>`;
-    }).join('');
-    return `<circle class="anillo" cx="${cx}" cy="${cy}" r="${radio}"/><g class="giro r${i}">${pastillas}</g>`;
-  }).join('\n');
-  const svg = leer('src', 'stack.svg').toString()
-    .replaceAll('{{FONTS}}', () => FONTS).replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => marcado);
-  writeFileSync(join(RAIZ, 'assets', 'stack.svg'), svg);
+}
+
+// Un glifo de la colección de logos, para incrustarlo en una página HTML (los botones).
+function glifo(id) {
+  const m = LOGOS.match(new RegExp(`<symbol id="${id}"([^>]*)>([\\s\\S]*?)</symbol>`));
+  const vista = m[1].match(/viewBox="([^"]+)"/)[1];
+  return `<svg class="icono" viewBox="${vista}" width="30" height="30" aria-hidden="true">${m[2]}</svg>`;
+}
+
+const BOTONES = [
+  { archivo: 'button-linkedin.png', icono: 'linkedin', texto: 'Conectemos en LinkedIn' },
+  { archivo: 'button-linkedin-en.png', icono: 'linkedin', texto: "Let's connect on LinkedIn" },
+  { archivo: 'button-idioma-en.png', texto: 'English version' },
+  { archivo: 'button-idioma-es.png', texto: 'Versión en español' },
+];
+
+function buildButton() {
+  mkdirSync(salida(), { recursive: true });
+  for (const { archivo, icono, texto } of BOTONES) {
+    capturar('button.html', { ICONO: icono ? glifo(icono) : '', TEXTO: esc(texto) }, salida(archivo), { alto: 92, ancho: 420, transparente: true });
+  }
+}
+
+const FONDO_VIDEO = process.env.FONDO_VIDEO; // ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio)
+const CALIDAD_WEBP = process.env.CALIDAD_WEBP ?? '75';
+const BUCLE = { inicio: 0.5, segundos: 2.2 }; // tramo del túnel; va y vuelve para cerrar sin salto
+const RECORTE = 'crop=1920:480:0:300'; // 4:1 centrado en el túnel (el vídeo es de 1920x1080)
+
+function exigirVideo() {
+  if (!FONDO_VIDEO) throw new Error('Falta FONDO_VIDEO: ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio).');
 }
 
 // Un fotograma distinto del túnel por tarjeta: se extraen una vez y se versionan en src/frames/.
-const MOMENTOS = { codigo: 1.4, comunicacion: 5.6, negocio: 2.0, idiomas: 3.2 }; // túnel, hielo arquitectónico, túnel, túnel suave
+const MOMENTOS = { codigo: 1.4, comunicacion: 5.6, negocio: 2.0 }; // túnel, hielo arquitectónico, túnel
 
 function buildFrames() {
   exigirVideo();
@@ -119,16 +95,7 @@ function buildFrames() {
     ffmpeg('-ss', String(t), '-i', FONDO_VIDEO, '-vf', 'crop=513:1080:900:0,scale=300:632:flags=lanczos',
       '-frames:v', '1', '-q:v', '3', join(RAIZ, 'src', 'frames', `${id}.jpg`));
   }
-  ffmpeg('-ss', '1.4', '-i', FONDO_VIDEO, '-vf', 'crop=1426:958:0:60,scale=610:410:flags=lanczos',
-    '-frames:v', '1', '-q:v', '3', join(RAIZ, 'src', 'frames', 'escena.jpg')); // fondo del semitono del pase
 }
-
-const FONDO_VIDEO = process.env.FONDO_VIDEO; // ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio)
-const CALIDAD_WEBP = process.env.CALIDAD_WEBP ?? '75';
-const BUCLE = { inicio: 0.5, segundos: 2.2 }; // tramo del túnel; va y vuelve para cerrar sin salto
-const RECORTE = 'crop=1920:480:0:300'; // 4:1 centrado en el túnel (el vídeo es de 1920x1080)
-
-const ffmpeg = (...args) => execFileSync('ffmpeg', ['-y', '-v', 'error', ...args], { stdio: 'inherit' });
 
 // Grafo de ffmpeg: recorte, escala, bucle de ida y vuelta (sin repetir fotogramas en las costuras) y rótulo encima.
 function grafo(ancho, alto, fps) {
@@ -139,23 +106,58 @@ function grafo(ancho, alto, fps) {
     + `[1:v]scale=${ancho}:${alto}[rotulo];[bucle][rotulo]overlay=0:0:format=auto`;
 }
 
-function exigirVideo() {
-  if (!FONDO_VIDEO) throw new Error('Falta FONDO_VIDEO: ruta al vídeo del túnel (fondo_16-9.mp4 del portfolio).');
-}
-
 function buildHeader() {
   exigirVideo();
-  mkdirSync(join(RAIZ, 'assets'), { recursive: true });
-  const rotulo = join(RAIZ, 'tmp', 'rotulo.png');
-  capturar('header-overlay.html', {}, rotulo, { alto: 150, ancho: 600, transparente: true });
-  const entrada = ['-ss', String(BUCLE.inicio), '-t', String(BUCLE.segundos), '-i', FONDO_VIDEO, '-i', rotulo];
-  const salida = (nombre) => join(RAIZ, 'assets', nombre);
-  ffmpeg(...entrada, '-filter_complex', `${grafo(1200, 300, 15)},format=yuva420p[out]`, '-map', '[out]',
-    '-c:v', 'libwebp_anim', '-q:v', CALIDAD_WEBP, '-compression_level', '6', '-loop', '0', salida('header.webp'));
-  ffmpeg('-ss', '1.6', '-i', FONDO_VIDEO, '-i', rotulo, '-filter_complex',
-    `[0:v]${RECORTE},scale=1200:300:flags=lanczos,setsar=1[v];[1:v]scale=1200:300[o];[v][o]overlay=0:0:format=auto`,
-    '-frames:v', '1', salida('header-static.png'));
+  mkdirSync(salida(), { recursive: true });
+  for (const [idioma, sufijo] of Object.entries(SUFIJO)) {
+    const rotulo = join(RAIZ, 'tmp', `rotulo${sufijo}.png`);
+    capturar('header-overlay.html', { CARGO: CARGO[idioma] }, rotulo, { alto: 150, ancho: 600, transparente: true });
+    const entrada = ['-ss', String(BUCLE.inicio), '-t', String(BUCLE.segundos), '-i', FONDO_VIDEO, '-i', rotulo];
+    ffmpeg(...entrada, '-filter_complex', `${grafo(1200, 300, 15)},format=yuva420p[out]`, '-map', '[out]',
+      '-c:v', 'libwebp_anim', '-q:v', CALIDAD_WEBP, '-compression_level', '6', '-loop', '0', salida(`header${sufijo}.webp`));
+    ffmpeg('-ss', '1.6', '-i', FONDO_VIDEO, '-i', rotulo, '-filter_complex',
+      `[0:v]${RECORTE},scale=1200:300:flags=lanczos,setsar=1[v];[1:v]scale=1200:300[o];[v][o]overlay=0:0:format=auto`,
+      '-frames:v', '1', salida(`header${sufijo}-static.png`));
+  }
 }
 
-const tareas = { frames: buildFrames, cards: buildCards, button: buildButton, lanyard: buildLanyard, stack: buildStack, header: buildHeader };
+// Órbita del stack: todos los anillos giran a la vez (rotación rígida) y cada pastilla contra-gira para quedar recta.
+function buildStack() {
+  const [cx, cy] = [305, 220];
+  const { logos, anillos } = JSON.parse(leer('src', 'stack.json'));
+  const anchoPastilla = (nombre) => Math.round(nombre.length * 11.4 + 36 + (logos[nombre] ? 26 : 0));
+  const centros = (fases) => anillos.flatMap(({ radio, items }, i) => items.map((nombre, k) => {
+    const ang = (2 * Math.PI * k) / items.length + fases[i];
+    return { x: cx + radio * Math.cos(ang), y: cy + radio * Math.sin(ang), w: anchoPastilla(nombre) };
+  }));
+  const choques = (fases) => centros(fases).reduce((n, a, i, c) => n + c.slice(i + 1)
+    .filter((b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 8 && Math.abs(a.y - b.y) < 42).length, 0);
+  // Fases iniciales sin pastillas montadas: la rotación es rígida, así que no se montan nunca.
+  let fases = [0, 0, 0];
+  let menos = Infinity;
+  for (let f1 = 0; f1 < 6.28; f1 += 0.12) {
+    for (let f2 = 0; f2 < 6.28; f2 += 0.12) {
+      const n = choques([0, f1, f2]);
+      if (n < menos) { menos = n; fases = [0, f1, f2]; }
+    }
+  }
+  const css = anillos.map(({ vuelta }, i) => `.r${i},.c${i}{animation-duration:${vuelta}s}.c${i}{animation-direction:reverse}`).join('\n');
+  const marcado = anillos.map(({ radio, items }, i) => {
+    const pastillas = items.map((nombre, k) => {
+      const ang = (2 * Math.PI * k) / items.length + fases[i];
+      const w = anchoPastilla(nombre);
+      const logo = logos[nombre] ? `<use class="logo" href="#${logos[nombre]}" x="${-w / 2 + 16}" y="-9" width="18" height="18"/>` : '';
+      return `<g transform="translate(${(cx + radio * Math.cos(ang)).toFixed(1)} ${(cy + radio * Math.sin(ang)).toFixed(1)})">`
+        + `<g class="contra c${i} pastilla"><rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"/>${logo}`
+        + `<text x="${logos[nombre] ? 13 : 0}">${esc(nombre)}</text></g></g>`;
+    }).join('');
+    return `<circle class="anillo" cx="${cx}" cy="${cy}" r="${radio}"/><g class="giro r${i}">${pastillas}</g>`;
+  }).join('\n');
+  const svg = leer('src', 'stack.svg').toString()
+    .replaceAll('{{FONTS}}', () => FONTS).replaceAll('{{SIMBOLOS}}', () => LOGOS)
+    .replaceAll('{{CSS}}', () => css).replaceAll('{{ANILLOS}}', () => marcado);
+  writeFileSync(salida('stack.svg'), svg);
+}
+
+const tareas = { frames: buildFrames, cards: buildCards, button: buildButton, header: buildHeader, stack: buildStack };
 for (const t of process.argv[2] ? [process.argv[2]] : Object.keys(tareas)) tareas[t]();

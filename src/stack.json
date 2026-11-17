@@ -1,5 +1,21 @@
-[
-  { "radio": 85, "vuelta": 70, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },
-  { "radio": 140, "vuelta": 70, "sentido": 1, "items": ["Python", "TypeScript", "Next.js", "FastAPI", "PostgreSQL"] },
-  { "radio": 195, "vuelta": 70, "sentido": 1, "items": ["Firebase", "n8n", "Docker", "Playwright", "Git", "Make", "Coolify"] }
-]
+{
+  "logos": {
+    "Claude Code": "claude",
+    "MCP": "mcp",
+    "Python": "python",
+    "TypeScript": "typescript",
+    "Next.js": "nextdotjs",
+    "FastAPI": "fastapi",
+    "PostgreSQL": "postgresql",
+    "Firebase": "firebase",
+    "n8n": "n8n",
+    "Docker": "docker",
+    "Playwright": "playwright",
+    "GitHub": "github"
+  },
+  "anillos": [
+    { "radio": 85, "vuelta": 70, "sentido": 1, "items": ["Claude Code", "MCP", "RAG"] },
+    { "radio": 140, "vuelta": 70, "sentido": 1, "items": ["Python", "TypeScript", "Next.js", "FastAPI", "PostgreSQL"] },
+    { "radio": 195, "vuelta": 70, "sentido": 1, "items": ["Firebase", "n8n", "Docker", "Playwright", "GitHub", "Make", "Coolify"] }
+  ]
+}

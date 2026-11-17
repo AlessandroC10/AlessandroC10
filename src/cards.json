@@ -2,29 +2,37 @@
   {
     "id": "codigo",
     "lado": "izq",
-    "titulo": "Código",
-    "en": "AI apps, agents and automations that reach production, from process analysis to deployment. LLMs, RAG, MCP, Python and TypeScript.",
-    "es": "Aplicaciones, agentes y automatizaciones con IA que llegan a producción, del análisis del proceso al despliegue. LLM, RAG, MCP, Python y TypeScript."
+    "es": {
+      "titulo": "Código",
+      "texto": "Aplicaciones, agentes y automatizaciones con IA que llegan a producción, del análisis del proceso al despliegue. LLM, RAG, MCP, Python y TypeScript."
+    },
+    "en": {
+      "titulo": "Code",
+      "texto": "AI apps, agents and automations that reach production, from process analysis to deployment. LLMs, RAG, MCP, Python and TypeScript."
+    }
   },
   {
     "id": "comunicacion",
     "lado": "der",
-    "titulo": "Comunicación",
-    "en": "Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude.",
-    "es": "Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude."
+    "es": {
+      "titulo": "Comunicación",
+      "texto": "Ponente, mentor y jurado en las IAthon de Acelera Aragón. Más de 45 h formando a equipos técnicos y de negocio en Claude."
+    },
+    "en": {
+      "titulo": "Communication",
+      "texto": "Speaker, mentor and judge at the Acelera Aragón IAthons. 45+ hours training technical and business teams on Claude."
+    }
   },
   {
     "id": "negocio",
     "lado": "izq",
-    "titulo": "Negocio",
-    "en": "Digital marketing with AI, Meta Ads and Google Ads, 25+ commercial web proposals. Business Administration degree (ADE), audit at Deloitte.",
-    "es": "Marketing digital con IA, Meta Ads y Google Ads, más de 25 propuestas web comerciales. Grado en ADE y auditoría en Deloitte."
-  },
-  {
-    "id": "idiomas",
-    "lado": "der",
-    "titulo": "Idiomas",
-    "en": "Native Spanish, bilingual Italian, English B2 (C1 in progress). Customer service in English in Amsterdam.",
-    "es": "Español nativo, italiano bilingüe, inglés B2 (cursando C1). Atención al cliente en inglés en Ámsterdam."
+    "es": {
+      "titulo": "Negocio",
+      "texto": "Marketing digital con IA y más de 25 propuestas web comerciales para clientes. Grado en ADE y auditoría en Deloitte."
+    },
+    "en": {
+      "titulo": "Business",
+      "texto": "Digital marketing with AI and 25+ commercial web proposals for clients. Business Administration degree (ADE) and audit at Deloitte."
+    }
   }
 ]
