@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/portada-pixel.webp" width="830" alt="Pixel art de Alessandro de espaldas, programando de noche frente a un monitor, con una ventana a la ciudad, un bonsái y una lámpara.">
+<img src="assets/portada-pixel.webp" width="830" alt="Pixel art de Alessandro de espaldas, programando de noche en su habitación: dos monitores, un PC con ventiladores rosas, una lámpara de lava, estanterías con libros, un corcho con luces, un bonsái, una lámpara de escritorio y una ventana a la ciudad.">
 
 <picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/header-static.png">

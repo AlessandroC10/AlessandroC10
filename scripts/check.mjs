@@ -83,13 +83,13 @@ grupo('cards', () => {
   }
 });
 
-// Portada pixel (16:9, la del portfolio; WebP estático de 1660 px = 830 a 2x, hasta 250 KB).
+// Portada pixel (generada en Google Flow a partir de la del portfolio; WebP estático de 1660 px = 830 a 2x, hasta 250 KB).
 grupo('cover', () => {
   const f = ruta('assets', 'portada-pixel.webp');
   check('assets/portada-pixel.webp existe', existsSync(f));
   if (!existsSync(f)) return;
   const { w, h } = webpInfo(f);
-  check('portada-pixel.webp mide 1660x934', w === 1660 && h === 934, `${w}x${h}`);
+  check('portada-pixel.webp mide 1660x926', w === 1660 && h === 926, `${w}x${h}`);
   check('portada-pixel.webp pesa como mucho 250 KB', statSync(f).size <= 250 * KB, `${Math.round(statSync(f).size / KB)} KB`);
 });
 
