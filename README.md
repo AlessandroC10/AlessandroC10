@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/portada-pixel.webp" width="830" alt="Pixel art de Alessandro de espaldas, programando de noche frente a un monitor, con una ventana a la ciudad, un bonsái y una lámpara.">
+
 <picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/header-static.png">
   <img src="assets/header.webp" width="830" alt="Alessandro Conte. AI Developer, ponente y formador en IA. Cabecera animada: un túnel de cristales de hielo.">

@@ -1,5 +1,5 @@
 // Comprobador del repo del perfil. Sin dependencias: `node scripts/check.mjs [grupo]`.
-// Sin argumento corre todas las reglas; con uno, solo ese grupo (cards, header, svg, button, readme, repo).
+// Sin argumento corre todas las reglas; con uno, solo ese grupo (cards, cover, header, svg, button, readme, repo).
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -50,7 +50,8 @@ grupo('readme', () => {
   check('el alt de la cabecera lleva el nombre y el titular', /Alessandro Conte/.test(altCabecera) && /AI Developer/.test(altCabecera) && /ponente y formador en IA/i.test(altCabecera));
   check('el titular no se repite como texto visible', !/ponente y formador en IA/i.test(md.replace(/<[^>]*>/g, '')));
   check('respeta «reducir movimiento»', md.includes('prefers-reduced-motion: reduce'));
-  check('tiene las 6 imágenes (cabecera, 3 tarjetas, stack y LinkedIn)', imgs.length === 6, `${imgs.length}`);
+  check('tiene las 7 imágenes (portada pixel, cabecera, 3 tarjetas, stack y LinkedIn)', imgs.length === 7, `${imgs.length}`);
+  check('la portada pixel va la primera, encima de la cabecera', imgs[0]?.includes('assets/portada-pixel.webp') && md.indexOf('portada-pixel') < md.indexOf('header'));
   check('toda imagen lleva alt no vacío', imgs.every((i) => /\balt="[^"]+"/.test(i)));
   for (const { id, texto } of TARJETAS) check(`el alt de la tarjeta ${id} lleva su texto`, md.includes(texto));
   check('el alt del stack nombra todas las tecnologías', stack.every((t) => md.includes(t)), stack.filter((t) => !md.includes(t)).join(', '));
@@ -80,6 +81,16 @@ grupo('cards', () => {
     check(`${c} mide 1220 px de ancho`, w === 1220, `ancho ${w}`);
     check(`${c} pesa como mucho 250 KB`, size <= 250 * KB, `${Math.round(size / KB)} KB`);
   }
+});
+
+// Portada pixel (16:9, la del portfolio; WebP estático de 1660 px = 830 a 2x, hasta 250 KB).
+grupo('cover', () => {
+  const f = ruta('assets', 'portada-pixel.webp');
+  check('assets/portada-pixel.webp existe', existsSync(f));
+  if (!existsSync(f)) return;
+  const { w, h } = webpInfo(f);
+  check('portada-pixel.webp mide 1660x934', w === 1660 && h === 934, `${w}x${h}`);
+  check('portada-pixel.webp pesa como mucho 250 KB', statSync(f).size <= 250 * KB, `${Math.round(statSync(f).size / KB)} KB`);
 });
 
 // Cabecera (4:1; WebP animado hasta 3 MB y póster estático).
